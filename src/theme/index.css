@@ -1,0 +1,669 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --navy: #0B192C;
+  --blue: #1E60D5;
+  --blueHover: #1653BA;
+  --blueLight: #EEF5FF;
+  --ink: #1E293B;
+  --paper: #F1F5F9;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --muted: #64748B;
+  --teal: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background:
+    radial-gradient(at 0% 0%, rgba(224, 238, 255, 0.65) 0px, transparent 45%),
+    radial-gradient(at 100% 0%, rgba(238, 242, 255, 0.6) 0px, transparent 45%),
+    radial-gradient(at 50% 100%, rgba(225, 235, 250, 0.45) 0px, transparent 55%),
+    linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 50%, #E8EEF5 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+.brand-font {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+input,
+select,
+textarea {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #1E60D5 !important;
+  box-shadow: 0 0 0 3px rgba(30, 96, 213, 0.15);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 3px;
+}
+
+.shell-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(at 0% 0%, rgba(224, 238, 255, 0.65) 0px, transparent 45%),
+    radial-gradient(at 100% 0%, rgba(238, 242, 255, 0.6) 0px, transparent 45%),
+    radial-gradient(at 50% 100%, rgba(225, 235, 250, 0.45) 0px, transparent 55%),
+    linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 50%, #E8EEF5 100%);
+  position: relative;
+}
+
+.shell-body {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.shell-content {
+  flex: 1;
+  padding: 24px 28px 48px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Base Desktop Responsive Grids */
+.grid-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.grid-charts-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.grid-entry-header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.grid-entry-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.grid-losses {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.grid-builder-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.grid-admin-templates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.grid-form-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* Apple-Style Glassmorphism Cards & Panels */
+.apple-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 32px -4px rgba(15, 23, 42, 0.05), 0 2px 8px -2px rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  position: relative;
+}
+
+.apple-card-interactive {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px -4px rgba(30, 96, 213, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  border-color: rgba(147, 197, 253, 0.8);
+}
+
+.apple-pill-active {
+  background: linear-gradient(135deg, #1E60D5 0%, #1D4ED8 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px -1px rgba(30, 96, 213, 0.35) !important;
+  border-color: #1D4ED8 !important;
+}
+
+.apple-segmented-bar {
+  background: rgba(241, 245, 249, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  display: inline-flex;
+  gap: 4px;
+}
+
+.responsive-card {
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 32px -4px rgba(15, 23, 42, 0.05), 0 2px 8px -2px rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+}
+
+/* Tablet Breakpoint (<= 1024px) */
+@media (max-width: 1024px) {
+  .shell-content {
+    padding: 20px 20px 84px;
+  }
+
+  .grid-kpi {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .grid-charts-2 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .grid-entry-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet & Smaller Breakpoint (<= 900px) */
+@media (max-width: 900px) {
+  .grid-admin-templates {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Mobile & Tablet Portrait Breakpoint (<= 768px) */
+@media (max-width: 768px) {
+  .shell-content {
+    padding: 16px 14px 84px;
+    /* extra bottom padding for mobile navigation */
+  }
+
+  .responsive-card {
+    padding: 16px 14px !important;
+  }
+
+  .grid-builder-form {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .grid-form-3 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .grid-kpi {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .grid-entry-header {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .grid-entry-details {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .grid-losses {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 16px;
+  }
+
+  input,
+  textarea {
+    font-size: 14px;
+    min-height: 42px;
+  }
+
+  button {
+    min-height: 44px;
+    /* Touch-friendly target */
+  }
+}
+
+/* =========================================================
+   ENTERPRISE RESPONSIVE SELECT DROPDOWNS & OPTIONS STYLING
+   (Auto-adapts to screen resolution on Desktop, Tablet & Mobile)
+   ========================================================= */
+select,
+.pitti-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  color: #0F172A !important;
+  background-color: #FFFFFF !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 10px) center !important;
+  background-size: 14px 14px !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 8px !important;
+  padding: 8px 32px 8px 12px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  cursor: pointer !important;
+  max-width: 100% !important;
+}
+
+select:hover,
+.pitti-select:hover {
+  border-color: #94A3B8 !important;
+}
+
+select:focus,
+.pitti-select:focus {
+  outline: none !important;
+  border-color: #1E60D5 !important;
+  box-shadow: 0 0 0 3px rgba(30, 96, 213, 0.15) !important;
+}
+
+/* Ensure dropdown options have uniform, crisp, proportional styling across resolutions */
+select option,
+.pitti-select option {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #0F172A !important;
+  background-color: #FFFFFF !important;
+  padding: 8px 12px !important;
+}
+
+select option:checked {
+  background-color: #EFF6FF !important;
+  color: #1E60D5 !important;
+  font-weight: 700 !important;
+}
+
+/* Tablet Resolution Dropdown Fitting (769px - 1024px) */
+@media (max-width: 1024px) {
+
+  select,
+  .pitti-select {
+    font-size: 13px !important;
+    height: 40px !important;
+    padding: 8px 32px 8px 12px !important;
+  }
+
+  select option,
+  .pitti-select option {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+  }
+}
+
+/* Mobile Resolution Dropdown Fitting (<= 768px) */
+@media (max-width: 768px) {
+
+  select,
+  .pitti-select {
+    font-size: 14px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 9px 34px 9px 12px !important;
+    width: 100% !important;
+  }
+
+  select option,
+  .pitti-select option {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+  }
+}
+
+/* Responsive Filter Bars & Control Wrappers */
+.filter-bar-responsive {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-bar-responsive>div {
+  flex: 1 1 140px;
+  min-width: 120px;
+}
+
+.filter-bar-responsive select,
+.filter-bar-responsive input {
+  width: 100% !important;
+}
+
+/* Small Mobile Breakpoint (<= 480px) */
+@media (max-width: 480px) {
+  .grid-kpi {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-losses {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   APPLE-STYLE ANIMATED GRADIENT BUTTONS & HAPTIC SPRING PHYSICS
+   ========================================================= */
+@keyframes appleGradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.btn-apple-base,
+.btn-3d-base {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: 980px;
+  /* Signature Apple pill curve */
+  padding: 8px 18px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.2s ease,
+    border-color 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+/* Apple Liquid Light Specular Shimmer */
+.btn-apple-base::after,
+.btn-3d-base::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: skewX(-22deg);
+  pointer-events: none;
+}
+
+.btn-apple-base:hover::after,
+.btn-3d-base:hover::after {
+  left: 160%;
+  transition: left 0.75s ease-in-out;
+}
+
+.btn-apple-base:hover,
+.btn-3d-base:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.btn-apple-base:active,
+.btn-3d-base:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* Apple Navigation / Frosted Glass Pill Button */
+.btn-apple-nav,
+.btn-3d-nav {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 246, 251, 0.92) 100%);
+  color: #0F172A;
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+}
+
+.btn-apple-nav:hover,
+.btn-3d-nav:hover {
+  color: #007AFF;
+  border-color: rgba(0, 122, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.16), inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+.btn-apple-nav:active,
+.btn-3d-nav:active {
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.95) 0%, rgba(226, 232, 240, 0.9) 100%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Apple Primary Action Button (Flowing Indigo/Electric Blue Gradient) */
+.btn-apple-primary,
+.btn-3d-primary {
+  background: linear-gradient(135deg, #0A84FF 0%, #0066CC 35%, #4F46E5 70%, #0A84FF 100%);
+  background-size: 250% 250%;
+  animation: appleGradientShift 6s ease infinite;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 14px rgba(10, 132, 255, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+.btn-apple-primary:hover,
+.btn-3d-primary:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 8px 24px rgba(10, 132, 255, 0.52), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.btn-apple-primary:active,
+.btn-3d-primary:active {
+  filter: brightness(0.95);
+  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Apple Emerald Success Button (Flowing Aurora Green Gradient) */
+.btn-apple-success,
+.btn-3d-success {
+  background: linear-gradient(135deg, #34C759 0%, #28CD41 35%, #059669 70%, #34C759 100%);
+  background-size: 250% 250%;
+  animation: appleGradientShift 6s ease infinite;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 14px rgba(52, 199, 89, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+.btn-apple-success:hover,
+.btn-3d-success:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 8px 24px rgba(52, 199, 89, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.btn-apple-success:active,
+.btn-3d-success:active {
+  filter: brightness(0.95);
+  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* =========================================================
+   SIDEBAR ANIMATED BACKGROUND & AMBIENT AESTHETICS
+   ========================================================= */
+@keyframes sidebarGlowPulse {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+
+  50% {
+    transform: translate(15px, -20px) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes sidebarGridDrift {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 36px 72px;
+  }
+}
+
+@keyframes sidebarSweepBeam {
+  0% {
+    top: -15%;
+    opacity: 0;
+  }
+
+  30%,
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 115%;
+    opacity: 0;
+  }
+}
+
+.sidebar-animated-bg {
+  position: relative;
+  background: linear-gradient(170deg, #0B192C 0%, #06101D 50%, #0F2542 100%);
+  overflow: hidden;
+}
+
+.sidebar-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  animation: sidebarGridDrift 24s linear infinite;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.sidebar-beam {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 140px;
+  background: linear-gradient(180deg, transparent, #38BDF8 50%, #1E60D5 80%, transparent);
+  animation: sidebarSweepBeam 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  box-shadow: 0 0 12px #38BDF8;
+}
+
+/* =========================================================
+   SWEETALERT2 INDUSTRIAL DESIGN SYSTEM MODALS & ALERTS
+   ========================================================= */
+.pitti-swal-popup {
+  border-radius: 18px !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 24px 64px rgba(11, 25, 44, 0.3), 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+  padding: 24px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.pitti-swal-title {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #0B192C !important;
+  margin-bottom: 8px !important;
+}
+
+.pitti-swal-btn {
+  margin: 8px 6px !important;
+  padding: 10px 22px !important;
+  font-size: 13px !important;
+}
+
+.pitti-swal-cancel-btn {
+  margin: 8px 6px !important;
+  padding: 10px 18px !important;
+  font-size: 13px !important;
+}
