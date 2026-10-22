@@ -802,201 +802,377 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
           </p>
         </div>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ background: '#F8FAFC', borderBottom: `1px solid ${T.border}`, textAlign: 'left', color: T.muted }}>
-                <th style={{ padding: '12px 18px', fontWeight: 600 }}>Logbook / ID</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Date & Shift</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Department & Plant</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Operator & Machine</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Production Summary</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Status</th>
-                <th style={{ padding: '12px 18px', fontWeight: 600, textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSubmissions.map((sub, sIdx) => {
-                const subId = sub.submissionId || sub.id || `sub_${sIdx}`;
-                const effectiveStatus = (localStatusMap[sub.id || sub.submissionId || ''] || sub.status || 'pending').toLowerCase();
-                const firstRow = (sub.rows?.[0] || {}) as any;
+        <>
+          {/* Desktop Table View */}
+          <div className="desktop-table-view" style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: '#F8FAFC', borderBottom: `1px solid ${T.border}`, textAlign: 'left', color: T.muted }}>
+                  <th style={{ padding: '12px 18px', fontWeight: 600 }}>Logbook / ID</th>
+                  <th style={{ padding: '12px 14px', fontWeight: 600 }}>Date & Shift</th>
+                  <th style={{ padding: '12px 14px', fontWeight: 600 }}>Department & Plant</th>
+                  <th style={{ padding: '12px 14px', fontWeight: 600 }}>Operator & Machine</th>
+                  <th style={{ padding: '12px 14px', fontWeight: 600 }}>Production Summary</th>
+                  <th style={{ padding: '12px 14px', fontWeight: 600 }}>Status</th>
+                  <th style={{ padding: '12px 18px', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSubmissions.map((sub, sIdx) => {
+                  const subId = sub.submissionId || sub.id || `sub_${sIdx}`;
+                  const effectiveStatus = (localStatusMap[sub.id || sub.submissionId || ''] || sub.status || 'pending').toLowerCase();
+                  const firstRow = (sub.rows?.[0] || {}) as any;
 
-                // Production Summary
-                let totalKgs = 0;
-                let totalNos = 0;
-                if (Array.isArray(sub.rows)) {
-                  sub.rows.forEach((r: any) => {
-                    if (r.prodKgs || r.prodQtyKg || r.prodQty) totalKgs += Number(r.prodKgs || r.prodQtyKg || r.prodQty) || 0;
-                    if (r.prodNos || r.actQty || r.actualQty || r.totalNos) totalNos += Number(r.prodNos || r.actQty || r.actualQty || r.totalNos) || 0;
-                  });
-                }
-                const prodSummary =
-                  totalKgs > 0 && totalNos > 0
-                    ? `${totalKgs.toLocaleString()} Kg / ${totalNos.toLocaleString()} Nos`
-                    : totalKgs > 0
-                      ? `${totalKgs.toLocaleString()} Kg`
-                      : totalNos > 0
-                        ? `${totalNos.toLocaleString()} Nos`
-                        : firstRow.qty || firstRow.prodQty
-                          ? `${firstRow.qty || firstRow.prodQty} Qty`
-                          : '—';
+                  // Production Summary
+                  let totalKgs = 0;
+                  let totalNos = 0;
+                  if (Array.isArray(sub.rows)) {
+                    sub.rows.forEach((r: any) => {
+                      if (r.prodKgs || r.prodQtyKg || r.prodQty) totalKgs += Number(r.prodKgs || r.prodQtyKg || r.prodQty) || 0;
+                      if (r.prodNos || r.actQty || r.actualQty || r.totalNos) totalNos += Number(r.prodNos || r.actQty || r.actualQty || r.totalNos) || 0;
+                    });
+                  }
+                  const prodSummary =
+                    totalKgs > 0 && totalNos > 0
+                      ? `${totalKgs.toLocaleString()} Kg / ${totalNos.toLocaleString()} Nos`
+                      : totalKgs > 0
+                        ? `${totalKgs.toLocaleString()} Kg`
+                        : totalNos > 0
+                          ? `${totalNos.toLocaleString()} Nos`
+                          : firstRow.qty || firstRow.prodQty
+                            ? `${firstRow.qty || firstRow.prodQty} Qty`
+                            : '—';
 
-                // Status Badge Color
-                const badgeConfig =
-                  effectiveStatus === 'approved'
-                    ? { bg: '#DCFCE7', text: '#15803D', label: '✓ Approved' }
-                    : effectiveStatus === 'rejected'
-                      ? { bg: '#FEE2E2', text: '#DC2626', label: '✕ Rejected' }
-                      : effectiveStatus === 'draft'
-                        ? { bg: '#F1F5F9', text: '#475569', label: ' Draft' }
-                        : { bg: '#FEF3C7', text: '#B45309', label: 'Pending Review' };
+                  // Status Badge Color
+                  const badgeConfig =
+                    effectiveStatus === 'approved'
+                      ? { bg: '#DCFCE7', text: '#15803D', label: '✓ Approved' }
+                      : effectiveStatus === 'rejected'
+                        ? { bg: '#FEE2E2', text: '#DC2626', label: '✕ Rejected' }
+                        : effectiveStatus === 'draft'
+                          ? { bg: '#F1F5F9', text: '#475569', label: 'Draft' }
+                          : { bg: '#FEF3C7', text: '#B45309', label: 'Pending Review' };
 
-                return (
-                  <tr
-                    key={subId}
-                    style={{
-                      borderBottom: `1px solid ${T.border}`,
-                      transition: 'background 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = '#F8FAFC')}
-                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = '#FFFFFF')}
-                  >
-                    {/* Logbook / ID */}
-                    <td style={{ padding: '14px 18px' }}>
-                      <div style={{ fontWeight: 700, color: T.blue, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span></span> {subId}
-                      </div>
-                      <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>
-                        {sub.templateId?.replace('tpl_', '').replace('_dpr', '').replace('_', ' ').toUpperCase() || 'LOGBOOK'}
-                      </div>
-                    </td>
-
-                    {/* Date & Shift */}
-                    <td style={{ padding: '14px 14px' }}>
-                      <div style={{ fontWeight: 600, color: T.ink }}>{sub.date || 'Today'}</div>
-                      <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
-                        {sub.shift ? sub.shift.split('(')[0] : 'General Shift'}
-                      </div>
-                    </td>
-
-                    {/* Department & Plant */}
-                    <td style={{ padding: '14px 14px' }}>
-                      <div style={{ fontWeight: 600, color: T.ink }}>{sub.department || 'Production'}</div>
-                      <div style={{ fontSize: 11, color: '#4F46E5', fontWeight: 600, marginTop: 2 }}>
-                         {sub.plant || 'Plant-V'}
-                      </div>
-                    </td>
-
-                    {/* Operator & Machine */}
-                    <td style={{ padding: '14px 14px' }}>
-                      <div style={{ fontWeight: 600, color: T.ink }}>
-                        {sub.operatorName || firstRow.operator || user?.name || 'Operator'}
-                      </div>
-                      <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
-                        M/c: {firstRow.machine || '—'}
-                      </div>
-                    </td>
-
-                    {/* Production Summary */}
-                    <td style={{ padding: '14px 14px' }}>
-                      <div style={{ fontWeight: 700, color: T.ink }}>{prodSummary}</div>
-                      {firstRow.downTime || firstRow.mcBd ? (
-                        <div style={{ fontSize: 11, color: '#DC2626', marginTop: 2, fontWeight: 500 }}>
-                          Loss: {firstRow.downTime || firstRow.mcBd} min
+                  return (
+                    <tr
+                      key={subId}
+                      style={{
+                        borderBottom: `1px solid ${T.border}`,
+                        transition: 'background 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = '#F8FAFC')}
+                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = '#FFFFFF')}
+                    >
+                      {/* Logbook / ID */}
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ fontWeight: 700, color: T.blue, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span></span> {subId}
                         </div>
-                      ) : (
-                        <div style={{ fontSize: 11, color: '#10B981', marginTop: 2 }}>
-                          No stoppages
+                        <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>
+                          {sub.templateId?.replace('tpl_', '').replace('_dpr', '').replace('_', ' ').toUpperCase() || 'LOGBOOK'}
                         </div>
-                      )}
-                    </td>
+                      </td>
 
-                    {/* Status Badge */}
-                    <td style={{ padding: '14px 14px' }}>
-                      <span
-                        style={{
-                          background: badgeConfig.bg,
-                          color: badgeConfig.text,
-                          padding: '4px 10px',
-                          borderRadius: 999,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
-                      >
-                        {badgeConfig.label}
-                      </span>
-                    </td>
+                      {/* Date & Shift */}
+                      <td style={{ padding: '14px 14px' }}>
+                        <div style={{ fontWeight: 600, color: T.ink }}>{sub.date || 'Today'}</div>
+                        <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
+                          {sub.shift ? sub.shift.split('(')[0] : 'General Shift'}
+                        </div>
+                      </td>
 
-                    {/* Actions */}
-                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                        <button
-                          type="button"
-                          onClick={() => setActiveInspection(sub)}
+                      {/* Department & Plant */}
+                      <td style={{ padding: '14px 14px' }}>
+                        <div style={{ fontWeight: 600, color: T.ink }}>{sub.department || 'Production'}</div>
+                        <div style={{ fontSize: 11, color: '#4F46E5', fontWeight: 600, marginTop: 2 }}>
+                          {sub.plant || 'Plant-V'}
+                        </div>
+                      </td>
+
+                      {/* Operator & Machine */}
+                      <td style={{ padding: '14px 14px' }}>
+                        <div style={{ fontWeight: 600, color: T.ink }}>
+                          {sub.operatorName || firstRow.operator || user?.name || 'Operator'}
+                        </div>
+                        <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
+                          M/c: {firstRow.machine || '—'}
+                        </div>
+                      </td>
+
+                      {/* Production Summary */}
+                      <td style={{ padding: '14px 14px' }}>
+                        <div style={{ fontWeight: 700, color: T.ink }}>{prodSummary}</div>
+                        {firstRow.downTime || firstRow.mcBd ? (
+                          <div style={{ fontSize: 11, color: '#DC2626', marginTop: 2, fontWeight: 500 }}>
+                            Loss: {firstRow.downTime || firstRow.mcBd} min
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: 11, color: '#10B981', marginTop: 2 }}>
+                            No stoppages
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Status Badge */}
+                      <td style={{ padding: '14px 14px' }}>
+                        <span
                           style={{
-                            background: '#EFF6FF',
-                            color: T.blue,
-                            border: '1px solid #BFDBFE',
-                            padding: '6px 12px',
-                            borderRadius: 6,
-                            fontSize: 12,
-                            fontWeight: 600,
-                            cursor: 'pointer',
+                            background: badgeConfig.bg,
+                            color: badgeConfig.text,
+                            padding: '4px 10px',
+                            borderRadius: 999,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
                           }}
                         >
-                           Inspect
-                        </button>
+                          {badgeConfig.label}
+                        </span>
+                      </td>
 
-                        {/* Supervisor Quick Verify Button */}
-                        {role === 'role_supervisor' && effectiveStatus === 'pending' && (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => handleQuickApprove(subId)}
-                              style={{
-                                background: '#10B981',
-                                color: '#FFFFFF',
-                                border: 'none',
-                                padding: '6px 12px',
-                                borderRadius: 6,
-                                fontSize: 12,
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                              }}
-                              title="Sign and verify logbook"
-                            >
-                              ✓ Verify
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleQuickReject(subId)}
-                              style={{
-                                background: '#FEE2E2',
-                                color: '#DC2626',
-                                border: 'none',
-                                padding: '6px 10px',
-                                borderRadius: 6,
-                                fontSize: 12,
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                              }}
-                              title="Request correction"
-                            >
-                              ✕
-                            </button>
-                          </>
-                        )}
+                      {/* Actions */}
+                      <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                          <button
+                            type="button"
+                            onClick={() => setActiveInspection(sub)}
+                            style={{
+                              background: '#EFF6FF',
+                              color: T.blue,
+                              border: '1px solid #BFDBFE',
+                              padding: '6px 12px',
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Inspect
+                          </button>
+
+                          {/* Supervisor Quick Verify Button */}
+                          {role === 'role_supervisor' && effectiveStatus === 'pending' && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleQuickApprove(subId)}
+                                style={{
+                                  background: '#10B981',
+                                  color: '#FFFFFF',
+                                  border: 'none',
+                                  padding: '6px 12px',
+                                  borderRadius: 6,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                }}
+                                title="Sign and verify logbook"
+                              >
+                                ✓ Verify
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleQuickReject(subId)}
+                                style={{
+                                  background: '#FEE2E2',
+                                  color: '#DC2626',
+                                  border: 'none',
+                                  padding: '6px 10px',
+                                  borderRadius: 6,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                }}
+                                title="Request correction"
+                              >
+                                ✕
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile & Tablet Cards View */}
+          <div className="mobile-cards-view">
+            {filteredSubmissions.map((sub, sIdx) => {
+              const subId = sub.submissionId || sub.id || `sub_${sIdx}`;
+              const effectiveStatus = (localStatusMap[sub.id || sub.submissionId || ''] || sub.status || 'pending').toLowerCase();
+              const firstRow = (sub.rows?.[0] || {}) as any;
+
+              let totalKgs = 0;
+              let totalNos = 0;
+              if (Array.isArray(sub.rows)) {
+                sub.rows.forEach((r: any) => {
+                  if (r.prodKgs || r.prodQtyKg || r.prodQty) totalKgs += Number(r.prodKgs || r.prodQtyKg || r.prodQty) || 0;
+                  if (r.prodNos || r.actQty || r.actualQty || r.totalNos) totalNos += Number(r.prodNos || r.actQty || r.actualQty || r.totalNos) || 0;
+                });
+              }
+              const prodSummary =
+                totalKgs > 0 && totalNos > 0
+                  ? `${totalKgs.toLocaleString()} Kg / ${totalNos.toLocaleString()} Nos`
+                  : totalKgs > 0
+                    ? `${totalKgs.toLocaleString()} Kg`
+                    : totalNos > 0
+                      ? `${totalNos.toLocaleString()} Nos`
+                      : firstRow.qty || firstRow.prodQty
+                        ? `${firstRow.qty || firstRow.prodQty} Qty`
+                        : '—';
+
+              const badgeConfig =
+                effectiveStatus === 'approved'
+                  ? { bg: '#DCFCE7', text: '#15803D', label: '✓ Approved' }
+                  : effectiveStatus === 'rejected'
+                    ? { bg: '#FEE2E2', text: '#DC2626', label: '✕ Rejected' }
+                    : effectiveStatus === 'draft'
+                      ? { bg: '#F1F5F9', text: '#475569', label: 'Draft' }
+                      : { bg: '#FEF3C7', text: '#B45309', label: 'Pending Review' };
+
+              return (
+                <div key={subId} className="pitti-responsive-card">
+                  {/* Card Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#1E60D5', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Space Grotesk' }}>
+                        {subId}
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: T.ink, marginTop: 2 }}>
+                        {sub.templateId?.replace('tpl_', '').replace('_dpr', '').replace('_', ' ').toUpperCase() || 'LOGBOOK'}
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        background: badgeConfig.bg,
+                        color: badgeConfig.text,
+                        padding: '4px 10px',
+                        borderRadius: 999,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}
+                    >
+                      {badgeConfig.label}
+                    </span>
+                  </div>
+
+                  {/* Meta Chips */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+                    <span style={{ fontSize: 12, color: T.ink, background: '#F1F5F9', padding: '3px 8px', borderRadius: 6, fontWeight: 500 }}>
+                      {sub.date || 'Today'} • {sub.shift ? sub.shift.split('(')[0] : 'General Shift'}
+                    </span>
+                    <span style={{ fontSize: 11, color: '#4F46E5', background: '#EEF2FF', padding: '3px 8px', borderRadius: 6, fontWeight: 600 }}>
+                      {sub.department || 'Production'} ({sub.plant || 'Plant-V'})
+                    </span>
+                  </div>
+
+                  {/* Grid Metrics */}
+                  <div className="card-metric-grid">
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Operator</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: T.ink, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {sub.operatorName || firstRow.operator || user?.name || 'Operator'}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Machine</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: T.ink, marginTop: 2 }}>
+                        {firstRow.machine || '—'}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Production</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#047857', marginTop: 2 }}>
+                        {prodSummary}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div className="card-action-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingTop: 10, borderTop: `1px solid ${T.border}` }}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveInspection(sub)}
+                      style={{
+                        background: '#EFF6FF',
+                        color: T.blue,
+                        border: '1px solid #BFDBFE',
+                        padding: '5px 10px',
+                        borderRadius: 6,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        lineHeight: '16px',
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      Inspect
+                    </button>
+
+                    {role === 'role_supervisor' && effectiveStatus === 'pending' && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleQuickApprove(subId)}
+                          style={{
+                            background: '#10B981',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            padding: '5px 12px',
+                            borderRadius: 6,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            lineHeight: '16px',
+                            boxShadow: '0 1px 2px rgba(16, 185, 129, 0.2)',
+                          }}
+                          title="Sign and verify logbook"
+                        >
+                          ✓ Verify
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleQuickReject(subId)}
+                          style={{
+                            background: '#FEE2E2',
+                            color: '#DC2626',
+                            border: '1px solid #FECACA',
+                            padding: '5px 10px',
+                            borderRadius: 6,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            lineHeight: '16px',
+                          }}
+                          title="Request correction"
+                        >
+                          ✕ Reject
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {/* Inspection Modal */}

@@ -613,8 +613,9 @@ export function ApprovalsScreen() {
         </div>
       </div>
 
-      {/* 4. Live Approvals Queue Table */}
+      {/* 4. Live Approvals Queue Table (Desktop Table View) */}
       <div
+        className="desktop-table-view"
         style={{
           background: '#FFFFFF',
           borderRadius: 12,
@@ -788,6 +789,204 @@ export function ApprovalsScreen() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* 4b. Live Approvals Queue - Mobile & Tablet Cards View */}
+      <div className="mobile-cards-view">
+        {filteredRows.map((r, index) => (
+          <div
+            key={r.id || index}
+            className="pitti-responsive-card"
+          >
+            {/* Card Header: ID, Date & Status */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#1E60D5', fontFamily: 'Space Grotesk' }}>
+                    {r.submissionId}
+                  </span>
+                  <span style={{ fontSize: 12, color: T.muted, background: '#F1F5F9', padding: '2px 8px', borderRadius: 6, fontWeight: 500 }}>
+                    {r.dateTime}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1E293B' }}>{r.department}</span>
+                </div>
+              </div>
+              <StatusPill status={r.status} />
+            </div>
+
+            {/* Key Metadata Grid */}
+            <div className="card-metric-grid">
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Machine No.
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.ink, marginTop: 2 }}>
+                  {r.machineNo}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Operator
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.ink, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {r.operator}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Output Summary
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#047857', marginTop: 2 }}>
+                  {r.productionQty}
+                </div>
+              </div>
+            </div>
+
+            {/* Card Action Bar */}
+            <div className="card-action-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingTop: 10, borderTop: `1px solid ${T.border}` }}>
+              <button
+                type="button"
+                onClick={() => setInspectedEntry(r)}
+                title="Inspect full line items, QA observations & sign-offs"
+                style={{
+                  background: '#F1F5F9',
+                  color: '#334155',
+                  border: '1px solid #CBD5E1',
+                  padding: '5px 10px',
+                  borderRadius: 6,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  lineHeight: '16px',
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Inspect
+              </button>
+
+              {r.status === 'Pending' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleApprove(r)}
+                    style={{
+                      background: '#16A34A',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '5px 12px',
+                      borderRadius: 6,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      lineHeight: '16px',
+                      boxShadow: '0 1px 2px rgba(22, 163, 74, 0.2)',
+                    }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleReject(r)}
+                    style={{
+                      background: '#DC2626',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '5px 12px',
+                      borderRadius: 6,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      lineHeight: '16px',
+                      boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
+                    }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    Reject
+                  </button>
+                </>
+              ) : (
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    padding: '4px 8px',
+                    borderRadius: 6,
+                    background: r.status === 'Approved' ? '#DCFCE7' : '#FEE2E2',
+                    color: r.status === 'Approved' ? '#15803D' : '#DC2626',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  {r.status === 'Approved' ? (
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span>Signed</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                      <span>Returned</span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {filteredRows.length === 0 && (
+          <div
+            style={{
+              padding: 36,
+              textAlign: 'center',
+              background: '#FFFFFF',
+              borderRadius: 14,
+              border: `1px solid ${T.border}`,
+              color: T.muted,
+            }}
+          >
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', color: T.muted }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: T.ink }}>No logbook submissions found</div>
+            <div style={{ fontSize: 13, marginTop: 4 }}>
+              No entries match the selected filters ({statusFilter}, {deptFilter}, {shiftFilter}).
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 5. Inspection Modal for Detailed Physical Logbook Verification */}

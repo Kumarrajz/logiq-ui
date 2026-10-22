@@ -121,27 +121,77 @@ export function FormListScreen() {
           {isNewEntryMode || <button style={ghostBtn} onClick={() => nav('/entry')}>+ New entry</button>}
         </div>
         {subLoading && rows.length === 0 ? <div style={{ fontSize: 13, color: T.muted }}>Loading…</div> : (
-          <div className="table-scroll">
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 640 }}>
-            <thead><tr style={{ textAlign: 'left', color: T.muted, borderBottom: `1px solid ${T.border}` }}>
-              {['ID', 'Form', 'Department', 'Shift', 'Date', 'Status', 'Sync'].map((h) => <th key={h} style={{ padding: '8px 10px', fontWeight: 600 }}>{h}</th>)}
-            </tr></thead>
-            <tbody>
+          <>
+            {/* Desktop Table View */}
+            <div className="table-scroll desktop-table-view">
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 640 }}>
+                <thead><tr style={{ textAlign: 'left', color: T.muted, borderBottom: `1px solid ${T.border}` }}>
+                  {['ID', 'Form', 'Department', 'Shift', 'Date', 'Status', 'Sync'].map((h) => <th key={h} style={{ padding: '8px 10px', fontWeight: 600 }}>{h}</th>)}
+                </tr></thead>
+                <tbody>
+                  {rows.map((s) => {
+                    const sid = s.id ?? (s as unknown as { submissionId: string }).submissionId;
+                    return (
+                      <tr key={sid} style={{ borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }} onClick={() => nav(`/submissions/${sid}`)}>
+                        <td style={td}>{sid}</td><td style={td}>{tplName(s.templateId)}</td><td style={td}>{s.department || '—'}</td>
+                        <td style={td}>{s.shift || '—'}</td><td style={td}>{s.date || '—'}</td>
+                        <td style={td}><StatusPill status={s.status} /></td>
+                        <td style={td}><SyncBadge status={s.syncStatus === 'local_only' ? 'local' : s.syncStatus === 'synced' ? 'synced' : 'pending'} /></td>
+                      </tr>
+                    );
+                  })}
+                  {rows.length === 0 && <tr><td colSpan={7} style={{ padding: 16, color: T.muted }}>No entries yet — pick a template above to start.</td></tr>}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile & Tablet Cards View */}
+            <div className="mobile-cards-view">
               {rows.map((s) => {
                 const sid = s.id ?? (s as unknown as { submissionId: string }).submissionId;
                 return (
-                  <tr key={sid} style={{ borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }} onClick={() => nav(`/submissions/${sid}`)}>
-                    <td style={td}>{sid}</td><td style={td}>{tplName(s.templateId)}</td><td style={td}>{s.department || '—'}</td>
-                    <td style={td}>{s.shift || '—'}</td><td style={td}>{s.date || '—'}</td>
-                    <td style={td}><StatusPill status={s.status} /></td>
-                    <td style={td}><SyncBadge status={s.syncStatus === 'local_only' ? 'local' : s.syncStatus === 'synced' ? 'synced' : 'pending'} /></td>
-                  </tr>
+                  <div
+                    key={sid}
+                    className="pitti-responsive-card"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => nav(`/submissions/${sid}`)}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#1E60D5', fontFamily: 'Space Grotesk' }}>
+                        {sid}
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <StatusPill status={s.status} />
+                        <SyncBadge status={s.syncStatus === 'local_only' ? 'local' : s.syncStatus === 'synced' ? 'synced' : 'pending'} />
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: T.ink }}>
+                      {tplName(s.templateId)}
+                    </div>
+                    <div className="card-metric-grid" style={{ padding: 10 }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Department</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: T.ink, marginTop: 2 }}>{s.department || '—'}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Shift</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: T.ink, marginTop: 2 }}>{s.shift || '—'}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Date</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: T.ink, marginTop: 2 }}>{s.date || '—'}</div>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
-              {rows.length === 0 && <tr><td colSpan={7} style={{ padding: 16, color: T.muted }}>No entries yet — pick a template above to start.</td></tr>}
-            </tbody>
-          </table>
-          </div>
+              {rows.length === 0 && (
+                <div style={{ padding: 24, textAlign: 'center', color: T.muted, background: '#FFFFFF', borderRadius: 12, border: `1px solid ${T.border}` }}>
+                  No entries yet — pick a template above to start.
+                </div>
+              )}
+            </div>
+          </>
         )}
       </Card>
     </div>

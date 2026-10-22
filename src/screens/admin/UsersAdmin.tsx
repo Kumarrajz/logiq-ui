@@ -305,8 +305,9 @@ export function UsersAdmin() {
           </div>
 
           {/* Users Table */}
+          {/* Users Table / Cards */}
           <div className="clean-card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div className="table-scroll">
+            <div className="table-scroll desktop-table-view">
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 600 }}>
                 <thead>
                   <tr style={{ background: '#F8FAFC', borderBottom: `1px solid ${T.border}`, textAlign: 'left', color: T.muted }}>
@@ -347,6 +348,66 @@ export function UsersAdmin() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile & Tablet Users Cards View */}
+            <div className="mobile-cards-view" style={{ padding: 12 }}>
+              {isLoading && <div style={{ padding: 24, textAlign: 'center', color: T.muted }}>Loading…</div>}
+              {!isLoading && filteredUsers.length === 0 && <div style={{ padding: 24, textAlign: 'center', color: T.muted }}>No users found</div>}
+              {filteredUsers.map((u) => {
+                const rm = getRoleMeta(u.role);
+                return (
+                  <div key={u.employeeId} className="pitti-responsive-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                      <div>
+                        <div style={{ fontWeight: 700, color: T.ink, fontSize: 14 }}>{u.name}</div>
+                        <div style={{ fontSize: 12, color: T.muted, fontFamily: 'monospace', marginTop: 2 }}>ID: {u.employeeId}</div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 999, fontSize: 11, fontWeight: 600, color: rm.color, background: rm.bg }}>
+                          {rm.label}
+                        </span>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: '#15803D', background: '#DCFCE7', padding: '3px 8px', borderRadius: 999 }}>
+                          Active
+                        </span>
+                      </div>
+                    </div>
+                    <div className="card-metric-grid" style={{ padding: 10 }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Department</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: T.ink, marginTop: 2 }}>{u.department || '—'}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Plant</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: T.ink, marginTop: 2 }}>{u.plant || '—'}</div>
+                      </div>
+                    </div>
+                    <div className="card-action-bar" style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', paddingTop: 8, borderTop: `1px solid ${T.border}` }}>
+                      <button
+                        type="button"
+                        onClick={() => { toast('success', `Password reset for ${u.name}`); }}
+                        style={{ background: '#F1F5F9', border: `1px solid ${T.border}`, color: T.ink, padding: '5px 12px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', lineHeight: '16px' }}
+                      >
+                        Reset Password
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const ok = await showConfirm('Deactivate?', `Remove ${u.name}?`, 'Yes', 'Cancel');
+                          if (ok) {
+                            setLocalUsers((prev) => prev.filter((x) => x.employeeId !== u.employeeId));
+                            showSuccess('Removed', `${u.name} deactivated`);
+                          }
+                        }}
+                        style={{ background: '#FEE2E2', border: '1px solid #FECACA', color: '#DC2626', padding: '5px 12px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', lineHeight: '16px' }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
             <div style={{ padding: '10px 16px', background: '#F8FAFC', borderTop: `1px solid ${T.border}`, fontSize: 12, color: T.muted }}>
               {filteredUsers.length} of {allUsers.length} users
             </div>
