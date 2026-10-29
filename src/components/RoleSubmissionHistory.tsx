@@ -50,6 +50,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         date: today,
         shift: 'Shift A (06:00 AM – 02:00 PM)',
         status: 'approved',
+        syncStatus: 'synced',
         rows: [
           { machine: 'N3 - 5446', operator: 'Ramesh', tool: '506600', grade: '50C660', prodKgs: 1980, prodNos: 826, timeFrom: '08:00', timeTo: '11:30', downTime: 20 },
         ],
@@ -66,6 +67,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         date: today,
         shift: 'Shift A (06:00 AM – 02:00 PM)',
         status: 'pending',
+        syncStatus: 'synced',
         rows: [
           { machine: 'HP-1 (Stator)', operator: 'Suresh', model: '5447', actualQty: 16, targetQty: 16, mcBd: 15 },
         ],
@@ -82,6 +84,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         date: today,
         shift: 'Shift B (02:00 PM – 10:00 PM)',
         status: 'pending',
+        syncStatus: 'synced',
         rows: [
           { machine: 'MC-101 (VMC)', operator: 'Mangesh G.', partCode: 'P-9842', planQty: 50, actQty: 48, rejected: 0, downTime: 10 },
         ],
@@ -98,6 +101,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         date: today,
         shift: 'Shift A (06:00 AM – 02:00 PM)',
         status: 'approved',
+        syncStatus: 'synced',
         rows: [
           { machine: '500T-VDC Bühler', operator: 'Ballu Chavan', batchNo: 'B-2055', totalNos: 94, alTemp: 781 },
         ],
@@ -114,6 +118,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         date: today,
         shift: 'Shift C (10:00 PM – 06:00 AM)',
         status: 'pending',
+        syncStatus: 'synced',
         rows: [
           { machine: 'CTL-1250-A', operator: 'Arun', coilId: '46956 / 92000', prodQtyKg: 6195 },
         ],
@@ -142,9 +147,12 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
       if (role === 'role_operator') {
         const opName = (user?.name || '').toLowerCase();
         const subOp = (sub.operatorName || (sub.rows?.[0] as any)?.operator || '').toLowerCase();
-        // Allow operator to see their own entries
-        if (opName && !subOp.includes(opName) && !opName.includes(subOp) && subOp !== 'ramesh') {
-          // If logged in as operator, show their submissions
+        const opDept = (department || user?.department || '').toLowerCase();
+        const subDept = (sub.department || '').toLowerCase();
+        // Allow operator to see entries matching their name, common names, or same department
+        const matchesOp = !opName || subOp.includes(opName) || opName.includes(subOp) || subOp === 'ramesh' || subOp === 'vinay';
+        const matchesDept = !opDept || subDept.includes(opDept) || opDept.includes(subDept);
+        if (!matchesOp && !matchesDept) {
           return false;
         }
       } else if (role === 'role_supervisor') {
@@ -313,10 +321,12 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
     <div
       style={{
         marginTop: 36,
-        background: '#FFFFFF',
-        borderRadius: 14,
-        border: `1px solid ${T.border}`,
-        boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.05)',
+        background: 'rgba(255, 255, 255, 0.55)',
+        backdropFilter: 'blur(28px) saturate(210%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(210%)',
+        borderRadius: 18,
+        border: '1px solid rgba(255, 255, 255, 0.75)',
+        boxShadow: '0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95)',
         overflow: 'hidden',
       }}
     >
@@ -324,8 +334,10 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
       <div
         style={{
           padding: '20px 24px',
-          borderBottom: `1px solid ${T.border}`,
-          background: 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.6)',
+          background: 'rgba(255, 255, 255, 0.4)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -351,11 +363,11 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                background: '#F1F5F9',
+                background: 'rgba(255, 255, 255, 0.75)',
                 color: '#475569',
                 padding: '3px 9px',
                 borderRadius: 999,
-                border: '1px solid #E2E8F0',
+                border: '1px solid rgba(255, 255, 255, 0.85)',
                 textTransform: 'uppercase',
                 letterSpacing: 0.5,
               }}
@@ -373,17 +385,18 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
           <div
             style={{
               display: 'inline-flex',
-              background: '#F1F5F9',
+              background: 'rgba(255, 255, 255, 0.5)',
+              backdropFilter: 'blur(12px)',
               borderRadius: 8,
               padding: 3,
-              border: `1px solid ${T.border}`,
+              border: '1px solid rgba(255, 255, 255, 0.7)',
             }}
           >
             <button
               type="button"
               onClick={() => setViewMode('daily')}
               style={{
-                background: viewMode === 'daily' ? '#FFFFFF' : 'transparent',
+                background: viewMode === 'daily' ? 'rgba(255, 255, 255, 0.9)' : 'transparent',
                 color: viewMode === 'daily' ? T.blue : T.muted,
                 border: 'none',
                 padding: '6px 14px',
@@ -391,7 +404,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                 fontWeight: 600,
                 fontSize: 12,
                 cursor: 'pointer',
-                boxShadow: viewMode === 'daily' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                boxShadow: viewMode === 'daily' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -401,7 +414,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
               type="button"
               onClick={() => setViewMode('monthly')}
               style={{
-                background: viewMode === 'monthly' ? '#FFFFFF' : 'transparent',
+                background: viewMode === 'monthly' ? 'rgba(255, 255, 255, 0.9)' : 'transparent',
                 color: viewMode === 'monthly' ? T.blue : T.muted,
                 border: 'none',
                 padding: '6px 14px',
@@ -409,7 +422,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                 fontWeight: 600,
                 fontSize: 12,
                 cursor: 'pointer',
-                boxShadow: viewMode === 'monthly' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                boxShadow: viewMode === 'monthly' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -427,16 +440,35 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                 style={{
                   padding: '7px 12px',
                   borderRadius: 8,
-                  border: `1px solid ${T.border}`,
+                  border: '1px solid rgba(255, 255, 255, 0.75)',
                   fontSize: 13,
                   fontWeight: 600,
                   color: T.ink,
-                  background: '#FFFFFF',
+                  background: 'rgba(255, 255, 255, 0.55)',
+                  backdropFilter: 'blur(12px)',
                   cursor: 'pointer',
                   outline: 'none',
                 }}
               />
-              {selectedDate !== new Date().toISOString().slice(0, 10) && (
+              {selectedDate ? (
+                <button
+                  type="button"
+                  onClick={() => setSelectedDate('')}
+                  style={{
+                    background: '#F1F5F9',
+                    color: T.ink,
+                    border: '1px solid #CBD5E1',
+                    borderRadius: 6,
+                    padding: '6px 10px',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                  title="Show entries from all dates"
+                >
+                  All Dates
+                </button>
+              ) : (
                 <button
                   type="button"
                   onClick={() => setSelectedDate(new Date().toISOString().slice(0, 10))}
@@ -450,7 +482,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                     fontWeight: 600,
                     cursor: 'pointer',
                   }}
-                  title="Jump to today"
+                  title="Filter to today only"
                 >
                   Today
                 </button>
@@ -464,11 +496,12 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
               style={{
                 padding: '7px 12px',
                 borderRadius: 8,
-                border: `1px solid ${T.border}`,
+                border: '1px solid rgba(255, 255, 255, 0.75)',
                 fontSize: 13,
                 fontWeight: 600,
                 color: T.ink,
-                background: '#FFFFFF',
+                background: 'rgba(255, 255, 255, 0.55)',
+                backdropFilter: 'blur(12px)',
                 cursor: 'pointer',
                 outline: 'none',
               }}
@@ -480,19 +513,18 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
             <select
               value={selectedPlant}
               onChange={(e) => setSelectedPlant(e.target.value)}
+              className="select-compact"
               style={{
-                padding: '7px 12px',
-                borderRadius: 8,
-                border: '1px solid #C7D2FE',
-                background: '#EEF2FF',
-                color: '#4338CA',
-                fontSize: 12,
+                maxWidth: 140,
+                minWidth: 100,
                 fontWeight: 600,
+                color: '#4338CA',
+                background: 'rgba(238, 242, 255, 0.75)',
+                borderColor: 'rgba(199, 210, 254, 0.9)',
                 cursor: 'pointer',
-                outline: 'none',
               }}
             >
-              <option value="All Plants"> All Plants</option>
+              <option value="All Plants">All Plants</option>
               <option value="Plant-V">Plant-V</option>
               <option value="Aurangabad">Aurangabad</option>
             </select>
@@ -504,8 +536,8 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
       <div
         style={{
           padding: '16px 24px',
-          background: '#FAFAFB',
-          borderBottom: `1px solid ${T.border}`,
+          background: 'rgba(248, 250, 252, 0.35)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.55)',
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
           gap: 14,
@@ -514,11 +546,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         {/* KPI 1: Shift / Submission Count */}
         <div
           style={{
-            background: '#FFFFFF',
-            border: `1px solid ${T.border}`,
-            borderRadius: 10,
+            background: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.75)',
+            borderRadius: 12,
             padding: '12px 16px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+            boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
           }}
         >
           <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -535,11 +569,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         {/* KPI 2: Production Output (MT / Kgs / Nos) */}
         <div
           style={{
-            background: '#FFFFFF',
-            border: `1px solid ${T.border}`,
-            borderRadius: 10,
+            background: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.75)',
+            borderRadius: 12,
             padding: '12px 16px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+            boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
           }}
         >
           <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -560,11 +596,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         {/* KPI 3: Downtime & Stoppage Loss */}
         <div
           style={{
-            background: '#FFFFFF',
-            border: `1px solid ${T.border}`,
-            borderRadius: 10,
+            background: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.75)',
+            borderRadius: 12,
             padding: '12px 16px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+            boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
           }}
         >
           <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -582,11 +620,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         {role === 'role_operator' ? (
           <div
             style={{
-              background: '#FFFFFF',
-              border: `1px solid ${T.border}`,
-              borderRadius: 10,
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              borderRadius: 12,
               padding: '12px 16px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
             }}
           >
             <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -602,11 +642,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         ) : role === 'role_supervisor' ? (
           <div
             style={{
-              background: '#FFFFFF',
-              border: `1px solid ${T.border}`,
-              borderRadius: 10,
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              borderRadius: 12,
               padding: '12px 16px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
             }}
           >
             <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -622,11 +664,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         ) : role === 'role_manager' ? (
           <div
             style={{
-              background: '#FFFFFF',
-              border: `1px solid ${T.border}`,
-              borderRadius: 10,
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              borderRadius: 12,
               padding: '12px 16px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
             }}
           >
             <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -642,11 +686,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
         ) : (
           <div
             style={{
-              background: '#FFFFFF',
-              border: `1px solid ${T.border}`,
-              borderRadius: 10,
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              borderRadius: 12,
               padding: '12px 16px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              boxShadow: '0 4px 16px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
             }}
           >
             <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -666,8 +712,10 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
       <div
         style={{
           padding: '12px 24px',
-          borderBottom: `1px solid ${T.border}`,
-          background: '#FFFFFF',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.55)',
+          background: 'rgba(255, 255, 255, 0.4)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -675,21 +723,25 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
           gap: 12,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 260 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
           {/* Search Box */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              background: '#F8FAFC',
-              border: `1px solid ${T.border}`,
+              background: 'rgba(255, 255, 255, 0.55)',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              backdropFilter: 'blur(12px)',
               borderRadius: 8,
-              padding: '6px 12px',
-              flex: 1,
+              padding: '5px 10px',
+              flex: '1 1 180px',
               maxWidth: 320,
+              minWidth: 140,
+              height: 34,
+              boxSizing: 'border-box',
             }}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={T.muted} strokeWidth="2" style={{ marginRight: 8 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.muted} strokeWidth="2" style={{ marginRight: 8, flexShrink: 0 }}>
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -702,7 +754,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                 border: 'none',
                 background: 'transparent',
                 outline: 'none',
-                fontSize: 13,
+                fontSize: 12.5,
                 width: '100%',
                 color: T.ink,
               }}
@@ -714,14 +766,11 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
             <select
               value={selectedPlant}
               onChange={(e) => setSelectedPlant(e.target.value)}
+              className="select-compact"
               style={{
-                padding: '6px 10px',
-                borderRadius: 8,
-                border: `1px solid ${T.border}`,
-                fontSize: 12,
-                color: T.ink,
-                background: '#FFFFFF',
-                outline: 'none',
+                flex: '0 1 130px',
+                maxWidth: 140,
+                minWidth: 95,
                 cursor: 'pointer',
               }}
               title="Filter by Plant Facility"
@@ -738,14 +787,11 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
             <select
               value={selectedDeptFilter}
               onChange={(e) => setSelectedDeptFilter(e.target.value)}
+              className="select-compact"
               style={{
-                padding: '6px 10px',
-                borderRadius: 8,
-                border: `1px solid ${T.border}`,
-                fontSize: 12,
-                color: T.ink,
-                background: '#FFFFFF',
-                outline: 'none',
+                flex: '0 1 140px',
+                maxWidth: 160,
+                minWidth: 110,
                 cursor: 'pointer',
               }}
             >
@@ -760,19 +806,16 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
           <select
             value={selectedStatusFilter}
             onChange={(e) => setSelectedStatusFilter(e.target.value)}
+            className="select-compact"
             style={{
-              padding: '6px 10px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 12,
-              color: T.ink,
-              background: '#FFFFFF',
-              outline: 'none',
+              flex: '0 1 130px',
+              maxWidth: 150,
+              minWidth: 110,
               cursor: 'pointer',
             }}
           >
             <option value="All Statuses">All Statuses</option>
-            <option value="pending">Pending Verification</option>
+            <option value="pending">Pending</option>
             <option value="approved">✓ Approved</option>
             <option value="rejected">✕ Rejected</option>
             <option value="draft"> Draft</option>
@@ -807,7 +850,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
           <div className="desktop-table-view" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr style={{ background: '#F8FAFC', borderBottom: `1px solid ${T.border}`, textAlign: 'left', color: T.muted }}>
+                <tr style={{ background: 'rgba(248, 250, 252, 0.65)', borderBottom: '1px solid rgba(255, 255, 255, 0.7)', textAlign: 'left', color: T.muted }}>
                   <th style={{ padding: '12px 18px', fontWeight: 600 }}>Logbook / ID</th>
                   <th style={{ padding: '12px 14px', fontWeight: 600 }}>Date & Shift</th>
                   <th style={{ padding: '12px 14px', fontWeight: 600 }}>Department & Plant</th>
@@ -857,11 +900,11 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                     <tr
                       key={subId}
                       style={{
-                        borderBottom: `1px solid ${T.border}`,
+                        borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
                         transition: 'background 0.15s ease',
                       }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = '#F8FAFC')}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = '#FFFFFF')}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.75)')}
+                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = 'transparent')}
                     >
                       {/* Logbook / ID */}
                       <td style={{ padding: '14px 18px' }}>
@@ -939,14 +982,16 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                             type="button"
                             onClick={() => setActiveInspection(sub)}
                             style={{
-                              background: '#EFF6FF',
+                              background: 'rgba(239, 246, 255, 0.75)',
                               color: T.blue,
-                              border: '1px solid #BFDBFE',
+                              border: '1px solid rgba(191, 219, 254, 0.8)',
+                              backdropFilter: 'blur(10px)',
                               padding: '6px 12px',
-                              borderRadius: 6,
+                              borderRadius: 8,
                               fontSize: 12,
                               fontWeight: 600,
                               cursor: 'pointer',
+                              boxShadow: '0 2px 6px rgba(30, 96, 213, 0.08)',
                             }}
                           >
                             Inspect
@@ -959,14 +1004,15 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                                 type="button"
                                 onClick={() => handleQuickApprove(subId)}
                                 style={{
-                                  background: '#10B981',
+                                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%)',
                                   color: '#FFFFFF',
-                                  border: 'none',
+                                  border: '1px solid rgba(255, 255, 255, 0.4)',
                                   padding: '6px 12px',
-                                  borderRadius: 6,
+                                  borderRadius: 8,
                                   fontSize: 12,
                                   fontWeight: 600,
                                   cursor: 'pointer',
+                                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
                                 }}
                                 title="Sign and verify logbook"
                               >
@@ -976,14 +1022,15 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                                 type="button"
                                 onClick={() => handleQuickReject(subId)}
                                 style={{
-                                  background: '#FEE2E2',
-                                  color: '#DC2626',
-                                  border: 'none',
+                                  background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%)',
+                                  color: '#FFFFFF',
+                                  border: '1px solid rgba(255, 255, 255, 0.4)',
                                   padding: '6px 10px',
-                                  borderRadius: 6,
+                                  borderRadius: 8,
                                   fontSize: 12,
                                   fontWeight: 600,
                                   cursor: 'pointer',
+                                  boxShadow: '0 2px 8px rgba(239, 68, 68, 0.25)',
                                 }}
                                 title="Request correction"
                               >
@@ -1066,10 +1113,10 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
 
                   {/* Meta Chips */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, color: T.ink, background: '#F1F5F9', padding: '3px 8px', borderRadius: 6, fontWeight: 500 }}>
+                    <span style={{ fontSize: 12, color: T.ink, background: 'rgba(255, 255, 255, 0.65)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '3px 8px', borderRadius: 6, fontWeight: 500 }}>
                       {sub.date || 'Today'} • {sub.shift ? sub.shift.split('(')[0] : 'General Shift'}
                     </span>
-                    <span style={{ fontSize: 11, color: '#4F46E5', background: '#EEF2FF', padding: '3px 8px', borderRadius: 6, fontWeight: 600 }}>
+                    <span style={{ fontSize: 11, color: '#4F46E5', background: 'rgba(238, 242, 255, 0.7)', border: '1px solid rgba(199, 210, 254, 0.8)', padding: '3px 8px', borderRadius: 6, fontWeight: 600 }}>
                       {sub.department || 'Production'} ({sub.plant || 'Plant-V'})
                     </span>
                   </div>
@@ -1097,14 +1144,15 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                   </div>
 
                   {/* Actions Bar */}
-                  <div className="card-action-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingTop: 10, borderTop: `1px solid ${T.border}` }}>
+                  <div className="card-action-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingTop: 10, borderTop: '1px solid rgba(255, 255, 255, 0.7)' }}>
                     <button
                       type="button"
                       onClick={() => setActiveInspection(sub)}
                       style={{
-                        background: '#EFF6FF',
+                        background: 'rgba(239, 246, 255, 0.75)',
                         color: T.blue,
-                        border: '1px solid #BFDBFE',
+                        border: '1px solid rgba(191, 219, 254, 0.8)',
+                        backdropFilter: 'blur(10px)',
                         padding: '5px 10px',
                         borderRadius: 6,
                         fontSize: 11,
@@ -1114,6 +1162,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                         alignItems: 'center',
                         gap: 4,
                         lineHeight: '16px',
+                        boxShadow: '0 2px 6px rgba(30, 96, 213, 0.08)',
                       }}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1129,9 +1178,9 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                           type="button"
                           onClick={() => handleQuickApprove(subId)}
                           style={{
-                            background: '#10B981',
+                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%)',
                             color: '#FFFFFF',
-                            border: 'none',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
                             padding: '5px 12px',
                             borderRadius: 6,
                             fontSize: 11,
@@ -1141,7 +1190,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                             alignItems: 'center',
                             gap: 4,
                             lineHeight: '16px',
-                            boxShadow: '0 1px 2px rgba(16, 185, 129, 0.2)',
+                            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
                           }}
                           title="Sign and verify logbook"
                         >
@@ -1151,15 +1200,16 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                           type="button"
                           onClick={() => handleQuickReject(subId)}
                           style={{
-                            background: '#FEE2E2',
-                            color: '#DC2626',
-                            border: '1px solid #FECACA',
+                            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%)',
+                            color: '#FFFFFF',
+                            border: '1px solid rgba(255, 255, 255, 0.4)',
                             padding: '5px 10px',
                             borderRadius: 6,
                             fontSize: 11,
                             fontWeight: 600,
                             cursor: 'pointer',
                             lineHeight: '16px',
+                            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.25)',
                           }}
                           title="Request correction"
                         >

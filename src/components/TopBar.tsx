@@ -122,7 +122,7 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
         )}
 
         {canSwitchMultiPlant ? (
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', maxWidth: 160, minWidth: 110 }}>
             <select
               value={plant}
               onChange={(e) => {
@@ -130,18 +130,12 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
                 setPlant(newP);
                 if (user) setUser({ ...user, plant: newP }, role);
               }}
+              className="select-compact"
               style={{
-                padding: '6px 28px 6px 12px',
-                borderRadius: 8,
-                border: `1px solid ${T.border}`,
-                background: '#FFFFFF',
-                color: T.ink,
-                fontSize: 13,
+                maxWidth: 160,
+                width: '100%',
                 fontWeight: 600,
                 cursor: 'pointer',
-                appearance: 'none',
-                WebkitAppearance: 'none',
-                outline: 'none',
               }}
               title="Multi-Plant Facility Switcher"
             >
@@ -151,22 +145,6 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
                 </option>
               ))}
             </select>
-            <div
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-                color: T.muted,
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
           </div>
         ) : (
           <div
@@ -176,8 +154,9 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
               gap: 6,
               padding: '6px 12px',
               borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              background: '#F8FAFC',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              background: 'rgba(255, 255, 255, 0.55)',
+              backdropFilter: 'blur(16px)',
               color: T.ink,
               fontSize: 13,
               fontWeight: 600,
@@ -274,10 +253,12 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
                 position: 'absolute',
                 top: 46,
                 right: 0,
-                background: '#FFFFFF',
-                border: `1px solid ${T.border}`,
-                borderRadius: 10,
-                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                background: 'rgba(255, 255, 255, 0.75)',
+                backdropFilter: 'blur(28px) saturate(210%)',
+                WebkitBackdropFilter: 'blur(28px) saturate(210%)',
+                border: '1px solid rgba(255, 255, 255, 0.85)',
+                borderRadius: 14,
+                boxShadow: '0 20px 48px rgba(31, 38, 135, 0.15), inset 0 1px 1.5px rgba(255, 255, 255, 1)',
                 width: 250,
                 padding: '8px 0',
                 zIndex: 100,
@@ -297,9 +278,10 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
                     gap: 10,
                     cursor: 'pointer',
                     fontSize: 13,
-                    background: user?.name === p.name ? '#EEF5FF' : 'transparent',
+                    background: user?.name === p.name ? 'rgba(30, 96, 213, 0.1)' : 'transparent',
                     color: user?.name === p.name ? T.blue : T.ink,
                     fontWeight: user?.name === p.name ? 600 : 400,
+                    transition: 'background 0.15s ease',
                   }}
                 >
                   <div style={{ width: 26, height: 26, borderRadius: '50%', background: T.navy, color: '#fff', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -308,7 +290,7 @@ export function TopBar({ onToggleSidebar, isMobile }: TopBarProps) {
                   <span>{p.label}</span>
                 </div>
               ))}
-              <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 6, paddingTop: 6 }}>
+              <div style={{ borderTop: '1px solid rgba(226, 232, 240, 0.7)', marginTop: 6, paddingTop: 6 }}>
                 <div
                   onClick={() => {
                     setShowUserMenu(false);

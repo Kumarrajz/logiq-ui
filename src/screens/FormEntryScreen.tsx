@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProductionEntryScreen } from './ProductionEntryScreen';
 import { FormRenderer } from '../engine/FormRenderer';
@@ -254,6 +254,8 @@ export function FormEntryScreen() {
   }, [remoteTemplates]);
 
   const [activeTemplateId, setActiveTemplateId] = useState(templateId || 'tpl_press_shop');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
@@ -261,6 +263,22 @@ export function FormEntryScreen() {
       setActiveTemplateId(templateId);
     }
   }, [templateId]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent | TouchEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   // If reviewing an existing submission by ID
   if (id) {
@@ -342,21 +360,23 @@ export function FormEntryScreen() {
         <div
           style={{
             position: 'relative',
-            zIndex: 2,
+            zIndex: 10,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: 18,
+            gap: 14,
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
           {/* 1. Left: Active Logbook Info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 260, flex: '1 1 280px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: '1 1 240px' }}>
             <div
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
+                width: 44,
+                height: 44,
+                borderRadius: 12,
                 background: 'linear-gradient(135deg, #2B73EE 0%, #1750B8 100%)',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
                 boxShadow: '0 4px 14px rgba(30, 96, 213, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
@@ -367,7 +387,7 @@ export function FormEntryScreen() {
                 flexShrink: 0,
               }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
@@ -376,7 +396,7 @@ export function FormEntryScreen() {
               </svg>
             </div>
 
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
                 <span
                   style={{
@@ -428,12 +448,15 @@ export function FormEntryScreen() {
               <h2
                 style={{
                   margin: 0,
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: 700,
                   color: '#FFFFFF',
                   letterSpacing: '-0.02em',
                   fontFamily: "'Space Grotesk', sans-serif",
                   lineHeight: 1.3,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {currentTemplate.name}
@@ -443,15 +466,18 @@ export function FormEntryScreen() {
 
           {/* 2. Middle (Prominent): Form Selector Dropdown Highlighted with Radiant Glassmorphism */}
           <div
+            ref={dropdownRef}
             style={{
-              flex: '1 1 340px',
-              maxWidth: 460,
-              minWidth: 280,
-              background: 'linear-gradient(135deg, rgba(30, 96, 213, 0.2) 0%, rgba(14, 165, 233, 0.12) 100%)',
-              border: '1.5px solid rgba(56, 189, 248, 0.55)',
-              borderRadius: 16,
-              padding: '8px 14px',
-              boxShadow: '0 0 24px rgba(56, 189, 248, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
+              flex: '1 1 280px',
+              maxWidth: 420,
+              minWidth: 0,
+              width: '100%',
+              boxSizing: 'border-box',
+              background: 'linear-gradient(135deg, rgba(30, 96, 213, 0.22) 0%, rgba(14, 165, 233, 0.12) 100%)',
+              border: '1.5px solid rgba(56, 189, 248, 0.45)',
+              borderRadius: 14,
+              padding: '8px 12px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
               position: 'relative',
@@ -461,8 +487,7 @@ export function FormEntryScreen() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2px' }}>
-              <label
-                htmlFor="main-form-selector"
+              <span
                 style={{
                   fontSize: 10,
                   fontWeight: 800,
@@ -474,8 +499,8 @@ export function FormEntryScreen() {
                   gap: 4,
                 }}
               >
-                <span>SELECT PRODUCTION FORM</span>
-              </label>
+                SELECT PRODUCTION FORM
+              </span>
               <span
                 style={{
                   fontSize: 10,
@@ -487,64 +512,163 @@ export function FormEntryScreen() {
               </span>
             </div>
 
-            <div style={{ position: 'relative', width: '100%' }}>
-              <select
+            <div style={{ position: 'relative', width: '100%', minWidth: 0 }}>
+              <button
+                type="button"
                 id="main-form-selector"
                 aria-label="Select Production Form"
-                value={activeTemplateId}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setActiveTemplateId(val);
-                  nav(`/entry/${val}`);
-                }}
+                aria-haspopup="listbox"
+                aria-expanded={isDropdownOpen}
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
                 style={{
                   width: '100%',
-                  padding: '10px 38px 10px 14px',
-                  borderRadius: 10,
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  background: 'rgba(6, 16, 29, 0.85)',
+                  minWidth: 0,
+                  height: 34,
+                  padding: '0 10px',
+                  borderRadius: 8,
+                  border: isDropdownOpen ? '1px solid #38BDF8' : '1px solid rgba(255, 255, 255, 0.22)',
+                  background: 'rgba(6, 16, 29, 0.88)',
                   color: '#FFFFFF',
-                  fontSize: 13,
+                  fontSize: 12.5,
                   fontWeight: 600,
-                  outline: 'none',
-                  cursor: 'pointer',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
-                }}
-              >
-                {allTemplates.map((t) => {
-                  const tid = t.id ?? t.templateId;
-                  const dept = t.departments?.[0] || 'Production';
-                  const plantName = t.plants?.[0] || 'Plant-V';
-                  return (
-                    <option
-                      key={tid}
-                      value={tid}
-                      style={{ background: '#0B192C', color: '#FFFFFF', padding: '8px' }}
-                    >
-                      {dept}: {t.name} ({plantName})
-                    </option>
-                  );
-                })}
-              </select>
-
-              <div
-                style={{
-                  position: 'absolute',
-                  right: 14,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  pointerEvents: 'none',
-                  color: '#38BDF8',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
+                  boxSizing: 'border-box',
+                  textAlign: 'left',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, overflow: 'hidden' }}>
+                  <span
+                    style={{
+                      color: '#38BDF8',
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      background: 'rgba(56, 189, 248, 0.16)',
+                      border: '1px solid rgba(56, 189, 248, 0.3)',
+                      padding: '1px 6px',
+                      borderRadius: 4,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {currentTemplate.departments?.[0] || 'Production'}
+                  </span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#F8FAFC', fontSize: 12.5 }}>
+                    {currentTemplate.name}
+                  </span>
+                </div>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#94A3B8"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    flexShrink: 0,
+                    transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
-              </div>
+              </button>
+
+              {/* Floating Menu Popover strictly contained within card & device bounds */}
+              {isDropdownOpen && (
+                <div
+                  role="listbox"
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    left: 0,
+                    right: 0,
+                    width: '100%',
+                    maxWidth: '100%',
+                    maxHeight: 280,
+                    overflowY: 'auto',
+                    zIndex: 1000,
+                    background: 'rgba(10, 20, 36, 0.98)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: '1px solid rgba(56, 189, 248, 0.35)',
+                    borderRadius: 12,
+                    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(30, 96, 213, 0.35)',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                  }}
+                >
+                  {allTemplates.map((t) => {
+                    const tid = t.id ?? t.templateId;
+                    const dept = t.departments?.[0] || 'Production';
+                    const plantName = t.plants?.[0] || 'Plant-V';
+                    const isSelected = tid === activeTemplateId;
+
+                    return (
+                      <div
+                        key={tid}
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => {
+                          setActiveTemplateId(tid);
+                          setIsDropdownOpen(false);
+                          nav(`/entry/${tid}`);
+                        }}
+                        style={{
+                          padding: '8px 10px',
+                          borderRadius: 8,
+                          marginBottom: 2,
+                          background: isSelected ? 'rgba(30, 96, 213, 0.3)' : 'transparent',
+                          border: isSelected ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 8,
+                          transition: 'all 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelected) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected) e.currentTarget.style.background = 'transparent';
+                        }}
+                      >
+                        <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              fontSize: 12.5,
+                              fontWeight: 600,
+                              color: isSelected ? '#38BDF8' : '#F8FAFC',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {t.name}
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                            <span style={{ fontSize: 10, color: 'rgba(255, 255, 255, 0.65)' }}>{dept}</span>
+                            <span style={{ fontSize: 10, color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
+                            <span style={{ fontSize: 10, color: '#93C5FD' }}>{plantName}</span>
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 

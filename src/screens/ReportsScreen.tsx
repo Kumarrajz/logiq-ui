@@ -228,8 +228,12 @@ export function ReportsScreen() {
   const { data: remoteSubmissions = [] } = useSubmissions();
 
   // Filters
-  const [fromDate, setFromDate] = useState('2025-01-01');
-  const [toDate, setToDate] = useState('2025-01-31');
+  const [fromDate, setFromDate] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 3);
+    return d.toISOString().slice(0, 10);
+  });
+  const [toDate, setToDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [department, setDepartment] = useState('All Departments');
   const [shiftFilter, setShiftFilter] = useState('All Shifts');
   const [machineNo, setMachineNo] = useState('All Machines');
@@ -249,7 +253,7 @@ export function ReportsScreen() {
       const subDate = sub.date || '2025-01-29';
       const shiftStr = sub.shift?.toLowerCase().includes('shift') ? sub.shift : `Shift ${sub.shift || 'A'}`;
       const dept = sub.department || 'Production Shop';
-      const supervisor = (sub.shiftIncharge as string) || (sub.supervisor as string) || 'Shift Incharge';
+      const supervisor = ((sub as any).shiftIncharge as string) || ((sub as any).supervisor as string) || 'Shift Incharge';
       const status = sub.status === 'approved' ? 'Approved' : sub.status === 'rejected' ? 'Rejected' : 'Pending';
 
       if (Array.isArray(sub.rows) && sub.rows.length > 0) {
@@ -679,75 +683,74 @@ export function ReportsScreen() {
           background: '#FFFFFF',
           borderRadius: 12,
           border: `1px solid ${T.border}`,
-          padding: '16px 20px',
+          padding: '14px 18px',
           marginBottom: 20,
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-          gap: 12,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+          gap: 10,
           alignItems: 'end',
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
         {/* From Date */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>From Date</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>From Date</label>
           <input
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '5px 10px',
               borderRadius: 8,
               border: `1px solid ${T.border}`,
-              fontSize: 13,
+              fontSize: 12.5,
               background: '#FFFFFF',
               color: T.ink,
-              height: 38,
+              height: 34,
               boxSizing: 'border-box',
               outline: 'none',
               cursor: 'pointer',
+              minWidth: 0,
+              width: '100%',
             }}
           />
         </div>
 
         {/* To Date */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>To Date</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>To Date</label>
           <input
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '5px 10px',
               borderRadius: 8,
               border: `1px solid ${T.border}`,
-              fontSize: 13,
+              fontSize: 12.5,
               background: '#FFFFFF',
               color: T.ink,
-              height: 38,
+              height: 34,
               boxSizing: 'border-box',
               outline: 'none',
               cursor: 'pointer',
+              minWidth: 0,
+              width: '100%',
             }}
           />
         </div>
 
         {/* Department / Logbook */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Logbook / Department</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Logbook / Department</label>
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
-              color: T.ink,
-              height: 38,
-              boxSizing: 'border-box',
-              outline: 'none',
+              width: '100%',
+              minWidth: 0,
               cursor: 'pointer',
             }}
           >
@@ -762,21 +765,14 @@ export function ReportsScreen() {
         </div>
 
         {/* Shift */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Shift</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Shift</label>
           <select
             value={shiftFilter}
             onChange={(e) => setShiftFilter(e.target.value)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
-              color: T.ink,
-              height: 38,
-              boxSizing: 'border-box',
-              outline: 'none',
+              width: '100%',
+              minWidth: 0,
               cursor: 'pointer',
             }}
           >
@@ -788,21 +784,14 @@ export function ReportsScreen() {
         </div>
 
         {/* Machine */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Machine / Line</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Machine / Line</label>
           <select
             value={machineNo}
             onChange={(e) => setMachineNo(e.target.value)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
-              color: T.ink,
-              height: 38,
-              boxSizing: 'border-box',
-              outline: 'none',
+              width: '100%',
+              minWidth: 0,
               cursor: 'pointer',
             }}
           >
@@ -816,23 +805,25 @@ export function ReportsScreen() {
         </div>
 
         {/* Search */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Search Keyword</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Search Keyword</label>
           <input
             type="text"
             placeholder="Operator, Tool, Order..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '5px 10px',
               borderRadius: 8,
               border: `1px solid ${T.border}`,
-              fontSize: 13,
+              fontSize: 12.5,
               background: '#FFFFFF',
               color: T.ink,
-              height: 38,
+              height: 34,
               boxSizing: 'border-box',
               outline: 'none',
+              minWidth: 0,
+              width: '100%',
             }}
           />
         </div>

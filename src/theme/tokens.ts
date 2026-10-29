@@ -45,11 +45,11 @@ export const T = {
   redLight: "#FEE2E2",
 
   // Apple-Style Glassmorphism Tokens
-  appleGlassBg: "rgba(255, 255, 255, 0.82)",
-  appleGlassBgSubtle: "rgba(255, 255, 255, 0.65)",
-  appleGlassBorder: "rgba(255, 255, 255, 0.85)",
-  appleGlassBorderSubtle: "rgba(226, 232, 240, 0.75)",
-  appleGlassShadow: "0 10px 30px -4px rgba(15, 23, 42, 0.05), 0 2px 8px -2px rgba(15, 23, 42, 0.03)",
-  appleGlassHighlight: "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
-  appleBlur: "blur(24px)",
+  appleGlassBg: "rgba(255, 255, 255, 0.55)",
+  appleGlassBgSubtle: "rgba(255, 255, 255, 0.40)",
+  appleGlassBorder: "rgba(255, 255, 255, 0.75)",
+  appleGlassBorderSubtle: "rgba(255, 255, 255, 0.60)",
+  appleGlassShadow: "0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95)",
+  appleGlassHighlight: "inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95)",
+  appleBlur: "blur(28px) saturate(210%)",
 } as const;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { T } from '../theme/tokens';
 import { useAuthStore } from '../store/authStore';
 import { api } from '../api/client';
@@ -17,6 +18,7 @@ export interface ProductionEntryScreenProps {
 
 export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) {
   const nav = useNavigate();
+  const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
 
   // Dynamic Master Data queries
@@ -160,17 +162,24 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
 
   // Dynamic Shifts List
   const shiftsList = useMemo(() => {
+    function formatShift(s: any): string {
+      if (typeof s === 'string') return s;
+      const sName = s?.name || s?.shiftName || s?.shift || s?.code || s?.label || s?.title;
+      if (!sName) return 'Shift A (06:00 AM – 02:00 PM)';
+      return s.timings ? `${sName} (${s.timings})` : sName;
+    }
+
     const local = localStorage.getItem('logiq_master_shifts');
     if (local) {
       try {
         const parsed = JSON.parse(local);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s: any) => `${s.name || s.code} (${s.timings || 'Standard'})`);
+          return parsed.map(formatShift);
         }
       } catch { }
     }
     if (Array.isArray(dynamicShifts) && dynamicShifts.length > 0) {
-      return dynamicShifts.map((s: any) => (typeof s === 'string' ? s : `${s.name || s.code} (${s.timings || 'Standard'})`));
+      return dynamicShifts.map(formatShift);
     }
     return [
       'Shift A (Morning) (06:00 AM – 02:00 PM)',
@@ -327,6 +336,8 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
               productionType: prodType,
               qty: Number(prodQty) || 0,
               prodQty: Number(prodQty) || 0,
+              prodKgs: prodType === 'Kgs' ? Number(prodQty) || 0 : undefined,
+              prodNos: prodType === 'Nos' ? Number(prodQty) || 0 : undefined,
               targetQty: Number(targetQty) || 0,
               timeRange: prodTimeWindow,
               timeFrom,
@@ -349,12 +360,23 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
         payload: submissionData,
       });
 
+      // Save to localStorage backup
+      try {
+        const backupRaw = localStorage.getItem('logiq_local_submissions');
+        const backupArr = backupRaw ? JSON.parse(backupRaw) : [];
+        const nextBackup = [submissionData, ...backupArr.filter((s: any) => s.submissionId !== submissionId && s.id !== submissionId)];
+        localStorage.setItem('logiq_local_submissions', JSON.stringify(nextBackup.slice(0, 50)));
+      } catch {}
+
       // Send to backend API
       try {
         await api.post('/api/submissions', submissionData);
       } catch (err) {
         console.warn('Backend offline or saved locally:', err);
       }
+
+      // Immediately invalidate queries so that all tables refresh with real data
+      queryClient.invalidateQueries({ queryKey: ['submissions'] });
 
       setToastMessage(status === 'submitted' ? 'Production entry submitted for supervisor approval!' : 'Draft saved successfully!');
       setTimeout(() => {
@@ -476,14 +498,16 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              background: '#FFFFFF',
-              border: `1px solid ${T.border}`,
-              borderRadius: 8,
-              padding: '6px 12px',
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.8)',
+              borderRadius: 10,
+              padding: '6px 14px',
               fontSize: 13,
               fontWeight: 600,
               color: T.ink,
-              boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+              boxShadow: '0 4px 14px 0 rgba(31, 38, 135, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.95)',
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.blue} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -512,14 +536,16 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
             type="button"
             onClick={() => setEntryDate(new Date().toISOString().slice(0, 10))}
             style={{
-              background: '#EFF6FF',
+              background: 'rgba(239, 246, 255, 0.75)',
               color: T.blue,
-              border: '1px solid #BFDBFE',
-              borderRadius: 6,
-              padding: '7px 10px',
+              border: '1px solid rgba(191, 219, 254, 0.8)',
+              backdropFilter: 'blur(12px)',
+              borderRadius: 8,
+              padding: '7px 12px',
               fontSize: 12,
               fontWeight: 600,
               cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30, 96, 213, 0.08)',
             }}
             title="Set to today"
           >
@@ -538,12 +564,12 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
           gap: 10,
           marginBottom: 16,
           padding: '12px 18px',
-          background: 'rgba(240, 249, 255, 0.85)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          background: 'rgba(224, 242, 254, 0.55)',
+          backdropFilter: 'blur(20px) saturate(190%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(190%)',
           borderRadius: 14,
-          border: '1px solid rgba(186, 230, 253, 0.85)',
-          boxShadow: '0 2px 10px rgba(2, 132, 199, 0.06)',
+          border: '1px solid rgba(186, 230, 253, 0.8)',
+          boxShadow: '0 8px 24px 0 rgba(2, 132, 199, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 0.95)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#0369A1' }}>
@@ -555,15 +581,16 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
             type="button"
             onClick={handleQuickFillPreviousShift}
             style={{
-              background: '#FFFFFF',
+              background: 'rgba(255, 255, 255, 0.75)',
               color: '#0284C7',
-              border: '1px solid #7DD3FC',
+              border: '1px solid rgba(125, 211, 252, 0.8)',
+              backdropFilter: 'blur(10px)',
               borderRadius: 8,
               padding: '5px 12px',
               fontSize: 12,
               fontWeight: 600,
               cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.06)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 5,
@@ -580,15 +607,16 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
             type="button"
             onClick={handleQuickFillNominals}
             style={{
-              background: '#FFFFFF',
+              background: 'rgba(255, 255, 255, 0.75)',
               color: '#0284C7',
-              border: '1px solid #7DD3FC',
+              border: '1px solid rgba(125, 211, 252, 0.8)',
+              backdropFilter: 'blur(10px)',
               borderRadius: 8,
               padding: '5px 12px',
               fontSize: 12,
               fontWeight: 600,
               cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.06)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 5,
@@ -605,8 +633,8 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
         </div>
 
         <div style={{ fontSize: 11, color: '#0369A1' }}>
-          Shortcuts: <kbd style={{ background: '#FFFFFF', padding: '2px 6px', borderRadius: 5, fontWeight: 600, border: '1px solid #BAE6FD' }}>Ctrl+S</kbd> Submit ·{' '}
-          <kbd style={{ background: '#FFFFFF', padding: '2px 6px', borderRadius: 5, fontWeight: 600, border: '1px solid #BAE6FD' }}>Ctrl+D</kbd> Draft
+          Shortcuts: <kbd style={{ background: 'rgba(255, 255, 255, 0.85)', padding: '2px 6px', borderRadius: 5, fontWeight: 600, border: '1px solid #BAE6FD' }}>Ctrl+S</kbd> Submit ·{' '}
+          <kbd style={{ background: 'rgba(255, 255, 255, 0.85)', padding: '2px 6px', borderRadius: 5, fontWeight: 600, border: '1px solid #BAE6FD' }}>Ctrl+D</kbd> Draft
         </div>
       </div>
 
@@ -614,12 +642,12 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
       <div
         className="responsive-card apple-card"
         style={{
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          background: 'rgba(255, 255, 255, 0.55)',
+          backdropFilter: 'blur(28px) saturate(210%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(210%)',
           borderRadius: 20,
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 12px 36px -4px rgba(15, 23, 42, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)',
+          border: '1px solid rgba(255, 255, 255, 0.75)',
+          boxShadow: '0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95)',
           padding: 28,
         }}
       >
@@ -641,8 +669,9 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 8,
-                border: formErrors.department ? '1px solid #EF4444' : `1px solid ${T.border}`,
-                background: '#FFFFFF',
+                border: formErrors.department ? '1px solid #EF4444' : '1px solid rgba(255, 255, 255, 0.75)',
+                background: 'rgba(255, 255, 255, 0.55)',
+                backdropFilter: 'blur(16px)',
                 color: T.ink,
                 fontSize: 14,
                 outline: 'none',
@@ -668,8 +697,9 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 8,
-                border: formErrors.machineNo ? '1px solid #EF4444' : `1px solid ${T.border}`,
-                background: '#FFFFFF',
+                border: formErrors.machineNo ? '1px solid #EF4444' : '1px solid rgba(255, 255, 255, 0.75)',
+                background: 'rgba(255, 255, 255, 0.55)',
+                backdropFilter: 'blur(16px)',
                 color: T.ink,
                 fontSize: 14,
                 outline: 'none',
@@ -695,8 +725,9 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 8,
-                border: formErrors.operator ? '1px solid #EF4444' : `1px solid ${T.border}`,
-                background: '#FFFFFF',
+                border: formErrors.operator ? '1px solid #EF4444' : '1px solid rgba(255, 255, 255, 0.75)',
+                background: 'rgba(255, 255, 255, 0.55)',
+                backdropFilter: 'blur(16px)',
                 color: T.ink,
                 fontSize: 14,
                 outline: 'none',
@@ -740,8 +771,9 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 8,
-                border: formErrors.shift ? '1px solid #EF4444' : `1px solid ${T.border}`,
-                background: '#FFFFFF',
+                border: formErrors.shift ? '1px solid #EF4444' : '1px solid rgba(255, 255, 255, 0.75)',
+                background: 'rgba(255, 255, 255, 0.55)',
+                backdropFilter: 'blur(16px)',
                 color: T.ink,
                 fontSize: 14,
                 outline: 'none',

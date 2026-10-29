@@ -138,7 +138,8 @@ export function ApprovalsScreen() {
       } else if (totalNos > 0) {
         prodSummary = `${totalNos.toLocaleString()} Nos`;
       } else if (firstRow.qty || firstRow.prodQty) {
-        prodSummary = `${Number(firstRow.qty || firstRow.prodQty).toLocaleString()} Kgs`;
+        const pType = (firstRow.productionType as string) || 'Kgs';
+        prodSummary = `${Number(firstRow.qty || firstRow.prodQty).toLocaleString()} ${pType}`;
       }
 
       // Department & Machine names
@@ -157,13 +158,16 @@ export function ApprovalsScreen() {
         computedStatus = localStatuses[subId];
       }
 
-      const formattedDate = s.date || '2025-01-29';
+      const formattedDate = s.date || (s.createdAt ? new Date(s.createdAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10));
       const shiftStr = s.shift?.toLowerCase().includes('shift') ? s.shift : `Shift ${s.shift || 'A'}`;
+
+      const createdTime = s.submittedAt || s.createdAt;
+      const formattedDateTime = createdTime ? new Date(createdTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : `${formattedDate} (${shiftStr})`;
 
       return {
         id: subId,
         submissionId: s.submissionId || subId,
-        dateTime: s.submittedAt ? new Date(s.submittedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : `${formattedDate} (${shiftStr})`,
+        dateTime: formattedDateTime,
         date: formattedDate,
         shift: shiftStr,
         department: deptName,
@@ -325,9 +329,7 @@ export function ApprovalsScreen() {
             >
               Shopfloor Approvals & Sign-Offs
             </h1>
-            <div style={{ fontSize: 13, color: T.muted }}>
-              Review, verify, and digitally countersign shift logbooks submitted across plants
-            </div>
+            <div style={{ fontSize: 13, color: T.muted }}>Review, verify, and digitally countersign shift logbooks submitted across plants</div>
           </div>
         </div>
 
@@ -336,10 +338,12 @@ export function ApprovalsScreen() {
           type="button"
           onClick={() => refetch && refetch()}
           style={{
-            background: '#FFFFFF',
-            border: `1px solid ${T.border}`,
+            background: 'rgba(255, 255, 255, 0.65)',
+            backdropFilter: 'blur(16px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+            border: '1px solid rgba(255, 255, 255, 0.8)',
             padding: '8px 14px',
-            borderRadius: 8,
+            borderRadius: 10,
             fontSize: 12,
             fontWeight: 600,
             color: T.ink,
@@ -347,7 +351,8 @@ export function ApprovalsScreen() {
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            boxShadow: '0 4px 14px 0 rgba(0, 0, 0, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9)',
+            transition: 'all 0.2s ease',
           }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -359,7 +364,7 @@ export function ApprovalsScreen() {
         </button>
       </div>
 
-      {/* 2. Real-Time Status Metric Badges */}
+      {/* 2. Real-Time Status Metric Badges (Liquid Glass KPI Cards) */}
       <div
         style={{
           display: 'grid',
@@ -370,13 +375,16 @@ export function ApprovalsScreen() {
       >
         <div
           style={{
-            background: '#FFFBEB',
-            border: '1px solid #FDE68A',
-            borderRadius: 12,
+            background: 'linear-gradient(135deg, rgba(254, 243, 199, 0.6) 0%, rgba(255, 251, 235, 0.35) 100%)',
+            backdropFilter: 'blur(20px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(190%)',
+            border: '1px solid rgba(253, 230, 138, 0.7)',
+            borderRadius: 14,
             padding: '14px 18px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            boxShadow: '0 8px 24px 0 rgba(245, 158, 11, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9)',
           }}
         >
           <div>
@@ -385,7 +393,7 @@ export function ApprovalsScreen() {
               {kpis.pending}
             </div>
           </div>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B45309' }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(254, 243, 199, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B45309', boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.8)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
@@ -395,13 +403,16 @@ export function ApprovalsScreen() {
 
         <div
           style={{
-            background: '#F0FDF4',
-            border: '1px solid #BBF7D0',
-            borderRadius: 12,
+            background: 'linear-gradient(135deg, rgba(220, 252, 231, 0.6) 0%, rgba(240, 253, 244, 0.35) 100%)',
+            backdropFilter: 'blur(20px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(190%)',
+            border: '1px solid rgba(187, 247, 208, 0.7)',
+            borderRadius: 14,
             padding: '14px 18px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            boxShadow: '0 8px 24px 0 rgba(16, 185, 129, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9)',
           }}
         >
           <div>
@@ -410,7 +421,7 @@ export function ApprovalsScreen() {
               {kpis.approved}
             </div>
           </div>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#15803D' }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(220, 252, 231, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#15803D', boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.8)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
@@ -419,13 +430,16 @@ export function ApprovalsScreen() {
 
         <div
           style={{
-            background: '#FEF2F2',
-            border: '1px solid #FECACA',
-            borderRadius: 12,
+            background: 'linear-gradient(135deg, rgba(254, 226, 226, 0.6) 0%, rgba(254, 242, 242, 0.35) 100%)',
+            backdropFilter: 'blur(20px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(190%)',
+            border: '1px solid rgba(254, 202, 202, 0.7)',
+            borderRadius: 14,
             padding: '14px 18px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            boxShadow: '0 8px 24px 0 rgba(239, 68, 68, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9)',
           }}
         >
           <div>
@@ -434,7 +448,7 @@ export function ApprovalsScreen() {
               {kpis.rejected}
             </div>
           </div>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#DC2626' }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(254, 226, 226, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#DC2626', boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.8)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -444,13 +458,16 @@ export function ApprovalsScreen() {
 
         <div
           style={{
-            background: '#F8FAFC',
-            border: `1px solid ${T.border}`,
-            borderRadius: 12,
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(241, 245, 249, 0.45) 100%)',
+            backdropFilter: 'blur(20px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(190%)',
+            border: '1px solid rgba(255, 255, 255, 0.85)',
+            borderRadius: 14,
             padding: '14px 18px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            boxShadow: '0 8px 24px 0 rgba(15, 23, 42, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9)',
           }}
         >
           <div>
@@ -459,7 +476,7 @@ export function ApprovalsScreen() {
               {kpis.total}
             </div>
           </div>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.muted }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(241, 245, 249, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.muted, boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.8)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
@@ -471,61 +488,63 @@ export function ApprovalsScreen() {
         </div>
       </div>
 
-      {/* 3. Comprehensive Interactive Filter Bar */}
+      {/* 3. Comprehensive Interactive Filter Bar (Liquid Glass Panel) */}
       <div
         className="filter-bar-responsive"
         style={{
-          background: '#FFFFFF',
-          borderRadius: 12,
-          border: `1px solid ${T.border}`,
-          padding: '16px 20px',
+          background: 'rgba(255, 255, 255, 0.55)',
+          backdropFilter: 'blur(28px) saturate(210%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(210%)',
+          borderRadius: 16,
+          border: '1px solid rgba(255, 255, 255, 0.75)',
+          padding: '14px 18px',
           marginBottom: 20,
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95)',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-          gap: 12,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+          gap: 10,
           alignItems: 'end',
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
         {/* Date Filter with Actual Date Picker */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Date</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Date</label>
           <input
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '5px 10px',
               borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              fontSize: 12.5,
+              background: 'rgba(255, 255, 255, 0.55)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               color: T.ink,
               outline: 'none',
               cursor: 'pointer',
-              height: 38,
+              height: 34,
               boxSizing: 'border-box',
+              boxShadow: '0 2px 8px 0 rgba(31, 38, 135, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)',
+              minWidth: 0,
+              width: '100%',
             }}
           />
         </div>
 
         {/* Department Filter */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Department</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Department</label>
           <select
             value={deptFilter}
             onChange={(e) => setDeptFilter(e.target.value)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
-              color: T.ink,
-              outline: 'none',
+              width: '100%',
+              minWidth: 0,
               cursor: 'pointer',
-              height: 38,
-              boxSizing: 'border-box',
             }}
           >
             <option value="All Departments">All Departments</option>
@@ -539,22 +558,15 @@ export function ApprovalsScreen() {
         </div>
 
         {/* Shift Filter */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Shift</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Shift</label>
           <select
             value={shiftFilter}
             onChange={(e) => setShiftFilter(e.target.value)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
-              color: T.ink,
-              outline: 'none',
+              width: '100%',
+              minWidth: 0,
               cursor: 'pointer',
-              height: 38,
-              boxSizing: 'border-box',
             }}
           >
             <option value="All Shifts">All Shifts</option>
@@ -565,22 +577,15 @@ export function ApprovalsScreen() {
         </div>
 
         {/* Status Filter */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Status</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Status</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
-              color: T.ink,
-              outline: 'none',
+              width: '100%',
+              minWidth: 0,
               cursor: 'pointer',
-              height: 38,
-              boxSizing: 'border-box',
             }}
           >
             <option value="Pending">Pending Verification</option>
@@ -591,37 +596,44 @@ export function ApprovalsScreen() {
         </div>
 
         {/* Search Input */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Quick Search</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, width: '100%' }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: T.muted }}>Quick Search</label>
           <input
             type="text"
             placeholder="Search M/c, Operator..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '5px 10px',
               borderRadius: 8,
-              border: `1px solid ${T.border}`,
-              fontSize: 13,
-              background: '#FFFFFF',
+              border: '1px solid rgba(255, 255, 255, 0.75)',
+              fontSize: 12.5,
+              background: 'rgba(255, 255, 255, 0.55)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               color: T.ink,
               outline: 'none',
-              height: 38,
+              height: 34,
               boxSizing: 'border-box',
+              boxShadow: '0 2px 8px 0 rgba(31, 38, 135, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)',
+              minWidth: 0,
+              width: '100%',
             }}
           />
         </div>
       </div>
 
-      {/* 4. Live Approvals Queue Table (Desktop Table View) */}
+      {/* 4. Live Approvals Queue Table (Desktop Liquid Glass Table) */}
       <div
         className="desktop-table-view"
         style={{
-          background: '#FFFFFF',
-          borderRadius: 12,
-          border: `1px solid ${T.border}`,
+          background: 'rgba(255, 255, 255, 0.55)',
+          backdropFilter: 'blur(28px) saturate(210%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(210%)',
+          borderRadius: 16,
+          border: '1px solid rgba(255, 255, 255, 0.75)',
           overflow: 'hidden',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95)',
         }}
       >
         <div className="table-scroll">
@@ -629,8 +641,8 @@ export function ApprovalsScreen() {
             <thead>
               <tr
                 style={{
-                  background: '#F8FAFC',
-                  borderBottom: `1px solid ${T.border}`,
+                  background: 'rgba(248, 250, 252, 0.75)',
+                  borderBottom: '1px solid rgba(226, 232, 240, 0.75)',
                   textAlign: 'left',
                   color: T.muted,
                 }}
@@ -650,10 +662,10 @@ export function ApprovalsScreen() {
                 <tr
                   key={r.id}
                   style={{
-                    borderBottom: `1px solid ${T.border}`,
+                    borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
                     transition: 'background 0.15s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.85)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
                   <td style={{ padding: '14px 16px', color: T.muted }}>{index + 1}</td>
@@ -681,14 +693,16 @@ export function ApprovalsScreen() {
                         onClick={() => setInspectedEntry(r)}
                         title="Inspect full line items, QA observations & sign-offs"
                         style={{
-                          background: '#F1F5F9',
-                          color: '#334155',
-                          border: '1px solid #CBD5E1',
-                          padding: '6px 10px',
-                          borderRadius: 6,
+                          background: 'rgba(239, 246, 255, 0.75)',
+                          color: T.blue,
+                          border: '1px solid rgba(191, 219, 254, 0.8)',
+                          backdropFilter: 'blur(10px)',
+                          padding: '6px 12px',
+                          borderRadius: 8,
                           fontSize: 12,
                           fontWeight: 600,
                           cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(30, 96, 213, 0.08)',
                         }}
                       >
                         Inspect
@@ -700,15 +714,15 @@ export function ApprovalsScreen() {
                             type="button"
                             onClick={() => handleApprove(r)}
                             style={{
-                              background: '#16A34A',
+                              background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.9) 0%, rgba(21, 128, 61, 0.9) 100%)',
                               color: '#FFFFFF',
-                              border: 'none',
-                              padding: '6px 12px',
-                              borderRadius: 6,
+                              border: '1px solid rgba(255, 255, 255, 0.4)',
+                              padding: '6px 14px',
+                              borderRadius: 8,
                               fontSize: 12,
                               fontWeight: 600,
                               cursor: 'pointer',
-                              boxShadow: '0 1px 2px rgba(22, 163, 74, 0.2)',
+                              boxShadow: '0 2px 8px rgba(22, 163, 74, 0.25)',
                             }}
                           >
                             Approve
@@ -717,15 +731,15 @@ export function ApprovalsScreen() {
                             type="button"
                             onClick={() => handleReject(r)}
                             style={{
-                              background: '#DC2626',
+                              background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.9) 0%, rgba(185, 28, 28, 0.9) 100%)',
                               color: '#FFFFFF',
-                              border: 'none',
+                              border: '1px solid rgba(255, 255, 255, 0.4)',
                               padding: '6px 12px',
-                              borderRadius: 6,
+                              borderRadius: 8,
                               fontSize: 12,
                               fontWeight: 600,
                               cursor: 'pointer',
-                              boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
+                              boxShadow: '0 2px 8px rgba(220, 38, 38, 0.25)',
                             }}
                           >
                             Reject
@@ -846,15 +860,16 @@ export function ApprovalsScreen() {
             </div>
 
             {/* Card Action Bar */}
-            <div className="card-action-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingTop: 10, borderTop: `1px solid ${T.border}` }}>
+            <div className="card-action-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingTop: 10, borderTop: '1px solid rgba(255, 255, 255, 0.7)' }}>
               <button
                 type="button"
                 onClick={() => setInspectedEntry(r)}
                 title="Inspect full line items, QA observations & sign-offs"
                 style={{
-                  background: '#F1F5F9',
-                  color: '#334155',
-                  border: '1px solid #CBD5E1',
+                  background: 'rgba(239, 246, 255, 0.75)',
+                  color: T.blue,
+                  border: '1px solid rgba(191, 219, 254, 0.8)',
+                  backdropFilter: 'blur(10px)',
                   padding: '5px 10px',
                   borderRadius: 6,
                   fontSize: 11,
@@ -864,6 +879,7 @@ export function ApprovalsScreen() {
                   alignItems: 'center',
                   gap: 4,
                   lineHeight: '16px',
+                  boxShadow: '0 2px 6px rgba(30, 96, 213, 0.08)',
                 }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -879,9 +895,9 @@ export function ApprovalsScreen() {
                     type="button"
                     onClick={() => handleApprove(r)}
                     style={{
-                      background: '#16A34A',
+                      background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.9) 0%, rgba(21, 128, 61, 0.9) 100%)',
                       color: '#FFFFFF',
-                      border: 'none',
+                      border: '1px solid rgba(255, 255, 255, 0.4)',
                       padding: '5px 12px',
                       borderRadius: 6,
                       fontSize: 11,
@@ -891,7 +907,7 @@ export function ApprovalsScreen() {
                       alignItems: 'center',
                       gap: 4,
                       lineHeight: '16px',
-                      boxShadow: '0 1px 2px rgba(22, 163, 74, 0.2)',
+                      boxShadow: '0 2px 8px rgba(22, 163, 74, 0.25)',
                     }}
                   >
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -903,9 +919,9 @@ export function ApprovalsScreen() {
                     type="button"
                     onClick={() => handleReject(r)}
                     style={{
-                      background: '#DC2626',
+                      background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.9) 0%, rgba(185, 28, 28, 0.9) 100%)',
                       color: '#FFFFFF',
-                      border: 'none',
+                      border: '1px solid rgba(255, 255, 255, 0.4)',
                       padding: '5px 12px',
                       borderRadius: 6,
                       fontSize: 11,
@@ -915,7 +931,7 @@ export function ApprovalsScreen() {
                       alignItems: 'center',
                       gap: 4,
                       lineHeight: '16px',
-                      boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
+                      boxShadow: '0 2px 8px rgba(220, 38, 38, 0.25)',
                     }}
                   >
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -966,13 +982,16 @@ export function ApprovalsScreen() {
             style={{
               padding: 36,
               textAlign: 'center',
-              background: '#FFFFFF',
-              borderRadius: 14,
-              border: `1px solid ${T.border}`,
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(20px) saturate(190%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(190%)',
+              borderRadius: 16,
+              border: '1px solid rgba(255, 255, 255, 0.8)',
               color: T.muted,
+              boxShadow: '0 8px 32px 0 rgba(15, 23, 42, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)',
             }}
           >
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', color: T.muted }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(241, 245, 249, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', color: T.muted, boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.8)' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
@@ -989,14 +1008,15 @@ export function ApprovalsScreen() {
         )}
       </div>
 
-      {/* 5. Inspection Modal for Detailed Physical Logbook Verification */}
+      {/* 5. Inspection Modal for Detailed Physical Logbook Verification (Liquid Glass Sheet) */}
       {inspectedEntry && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(15, 23, 42, 0.65)',
-            backdropFilter: 'blur(4px)',
+            background: 'rgba(15, 23, 42, 0.45)',
+            backdropFilter: 'blur(16px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1006,19 +1026,21 @@ export function ApprovalsScreen() {
         >
           <div
             style={{
-              background: '#FFFFFF',
-              borderRadius: 16,
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(36px) saturate(210%)',
+              WebkitBackdropFilter: 'blur(36px) saturate(210%)',
+              borderRadius: 20,
               maxWidth: 800,
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: `1px solid ${T.border}`,
+              boxShadow: '0 30px 60px -12px rgba(15, 23, 42, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1)',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
               padding: 24,
             }}
           >
             {/* Modal Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${T.border}`, paddingBottom: 16, marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.7)', paddingBottom: 16, marginBottom: 16 }}>
               <div>
                 <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: T.ink }}>
                   Logbook Submission #{inspectedEntry.submissionId}
@@ -1031,8 +1053,8 @@ export function ApprovalsScreen() {
                 type="button"
                 onClick={() => setInspectedEntry(null)}
                 style={{
-                  background: '#F1F5F9',
-                  border: 'none',
+                  background: 'rgba(255, 255, 255, 0.75)',
+                  border: '1px solid rgba(255, 255, 255, 0.85)',
                   borderRadius: 8,
                   width: 32,
                   height: 32,
@@ -1047,19 +1069,19 @@ export function ApprovalsScreen() {
 
             {/* Session Metadata Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 20 }}>
-              <div style={{ background: '#F8FAFC', padding: 12, borderRadius: 8 }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255, 255, 255, 0.75)', padding: 12, borderRadius: 10 }}>
                 <div style={{ fontSize: 11, color: T.muted, fontWeight: 600 }}>OPERATOR</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: T.ink }}>{inspectedEntry.operator}</div>
               </div>
-              <div style={{ background: '#F8FAFC', padding: 12, borderRadius: 8 }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255, 255, 255, 0.75)', padding: 12, borderRadius: 10 }}>
                 <div style={{ fontSize: 11, color: T.muted, fontWeight: 600 }}>MACHINE / CELL</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: T.ink }}>{inspectedEntry.machineNo}</div>
               </div>
-              <div style={{ background: '#F8FAFC', padding: 12, borderRadius: 8 }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255, 255, 255, 0.75)', padding: 12, borderRadius: 10 }}>
                 <div style={{ fontSize: 11, color: T.muted, fontWeight: 600 }}>RECORDED OUTPUT</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#047857' }}>{inspectedEntry.productionQty}</div>
               </div>
-              <div style={{ background: '#F8FAFC', padding: 12, borderRadius: 8 }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255, 255, 255, 0.75)', padding: 12, borderRadius: 10 }}>
                 <div style={{ fontSize: 11, color: T.muted, fontWeight: 600 }}>VERIFICATION STATUS</div>
                 <div style={{ marginTop: 2 }}><StatusPill status={inspectedEntry.status} /></div>
               </div>

@@ -23,10 +23,13 @@ body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background:
-    radial-gradient(at 0% 0%, rgba(224, 238, 255, 0.65) 0px, transparent 45%),
-    radial-gradient(at 100% 0%, rgba(238, 242, 255, 0.6) 0px, transparent 45%),
-    radial-gradient(at 50% 100%, rgba(225, 235, 250, 0.45) 0px, transparent 55%),
-    linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 50%, #E8EEF5 100%);
+    radial-gradient(at 10% 12%, rgba(99, 102, 241, 0.40) 0px, transparent 48%),
+    radial-gradient(at 88% 8%, rgba(14, 165, 233, 0.45) 0px, transparent 44%),
+    radial-gradient(at 52% 48%, rgba(168, 85, 247, 0.32) 0px, transparent 48%),
+    radial-gradient(at 82% 88%, rgba(37, 99, 235, 0.38) 0px, transparent 52%),
+    radial-gradient(at 8% 85%, rgba(16, 185, 129, 0.30) 0px, transparent 46%),
+    radial-gradient(at 60% 90%, rgba(245, 158, 11, 0.22) 0px, transparent 40%),
+    linear-gradient(145deg, #F0F4F9 0%, #E8EEF5 50%, #DDE5ED 100%);
   background-attachment: fixed;
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
@@ -52,14 +55,20 @@ select,
 textarea {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #1E60D5 !important;
-  box-shadow: 0 0 0 3px rgba(30, 96, 213, 0.15);
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(30, 96, 213, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(30, 96, 213, 0.2), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
 .table-scroll {
@@ -90,10 +99,13 @@ textarea:focus {
   max-width: 100%;
   overflow: hidden;
   background:
-    radial-gradient(at 0% 0%, rgba(224, 238, 255, 0.65) 0px, transparent 45%),
-    radial-gradient(at 100% 0%, rgba(238, 242, 255, 0.6) 0px, transparent 45%),
-    radial-gradient(at 50% 100%, rgba(225, 235, 250, 0.45) 0px, transparent 55%),
-    linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 50%, #E8EEF5 100%);
+    radial-gradient(at 10% 12%, rgba(99, 102, 241, 0.40) 0px, transparent 48%),
+    radial-gradient(at 88% 8%, rgba(14, 165, 233, 0.45) 0px, transparent 44%),
+    radial-gradient(at 52% 48%, rgba(168, 85, 247, 0.32) 0px, transparent 48%),
+    radial-gradient(at 82% 88%, rgba(37, 99, 235, 0.38) 0px, transparent 52%),
+    radial-gradient(at 8% 85%, rgba(16, 185, 129, 0.30) 0px, transparent 46%),
+    radial-gradient(at 60% 90%, rgba(245, 158, 11, 0.22) 0px, transparent 40%),
+    linear-gradient(145deg, #F0F4F9 0%, #E8EEF5 50%, #DDE5ED 100%);
   position: relative;
 }
 
@@ -132,8 +144,15 @@ textarea:focus {
 
 .grid-entry-header {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.grid-entry-header > div,
+.grid-entry-details > div,
+.grid-form-3 > div,
+.grid-builder-form > div {
+  min-width: 0;
 }
 
 .grid-entry-details {
@@ -168,11 +187,11 @@ textarea:focus {
 
 /* Apple-Style Glassmorphism Cards & Panels */
 .apple-card {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 10px 32px -4px rgba(15, 23, 42, 0.05), 0 2px 8px -2px rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(28px) saturate(210%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
   border-radius: 18px;
   position: relative;
 }
@@ -183,8 +202,9 @@ textarea:focus {
 
 .apple-card-interactive:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 36px -4px rgba(30, 96, 213, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
-  border-color: rgba(147, 197, 253, 0.8);
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 16px 42px -4px rgba(30, 96, 213, 0.14), inset 0 1px 1.5px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
 .apple-pill-active {
@@ -195,23 +215,23 @@ textarea:focus {
 }
 
 .apple-segmented-bar {
-  background: rgba(241, 245, 249, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 4px;
   border-radius: 12px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   display: inline-flex;
   gap: 4px;
 }
 
 .responsive-card {
   padding: 28px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 10px 32px -4px rgba(15, 23, 42, 0.05), 0 2px 8px -2px rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(28px) saturate(210%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
   border-radius: 18px;
 }
 
@@ -229,6 +249,11 @@ textarea:focus {
   .grid-charts-2 {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .grid-entry-header {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 
   .grid-entry-details {
@@ -302,87 +327,118 @@ select,
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 12.5px !important;
   font-weight: 500 !important;
-  line-height: 1.4 !important;
+  line-height: 1.35 !important;
   color: #0F172A !important;
-  background-color: #FFFFFF !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-color: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
-  background-position: calc(100% - 10px) center !important;
-  background-size: 14px 14px !important;
-  border: 1px solid #CBD5E1 !important;
+  background-position: calc(100% - 9px) center !important;
+  background-size: 11px 11px !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
   border-radius: 8px !important;
-  padding: 8px 32px 8px 12px !important;
-  height: 38px !important;
+  padding: 5px 28px 5px 10px !important;
+  height: 34px !important;
+  min-height: 34px !important;
   box-sizing: border-box !important;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.05), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   cursor: pointer !important;
   max-width: 100% !important;
+  min-width: 0 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
 }
 
 select:hover,
 .pitti-select:hover {
-  border-color: #94A3B8 !important;
+  background-color: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(255, 255, 255, 1) !important;
+  box-shadow: 0 4px 14px 0 rgba(31, 38, 135, 0.09), inset 0 1px 1.5px 0 rgba(255, 255, 255, 1) !important;
 }
 
 select:focus,
 .pitti-select:focus {
   outline: none !important;
-  border-color: #1E60D5 !important;
-  box-shadow: 0 0 0 3px rgba(30, 96, 213, 0.15) !important;
+  background-color: #FFFFFF !important;
+  border-color: rgba(30, 96, 213, 0.85) !important;
+  box-shadow: 0 0 0 2.5px rgba(30, 96, 213, 0.2), inset 0 1px 1.5px 0 rgba(255, 255, 255, 1) !important;
 }
 
-/* Ensure dropdown options have uniform, crisp, proportional styling across resolutions */
+/* Compact modifier */
+.select-compact {
+  height: 30px !important;
+  min-height: 30px !important;
+  font-size: 12px !important;
+  padding: 4px 24px 4px 8px !important;
+}
+
+/* Dark dropdown modifier for dark headers/surfaces */
+select.dark-select,
+.dark-select select {
+  color: #F8FAFC !important;
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23CBD5E1' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 10px) center !important;
+  background-size: 11px 11px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Ensure native options popup menu is neat, compact, and never overflows screen */
 select option,
 .pitti-select option {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 12.5px !important;
   font-weight: 500 !important;
   color: #0F172A !important;
   background-color: #FFFFFF !important;
-  padding: 8px 12px !important;
+  padding: 4px 8px !important;
+  line-height: 1.35 !important;
 }
 
 select option:checked {
   background-color: #EFF6FF !important;
   color: #1E60D5 !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
 }
 
 /* Tablet Resolution Dropdown Fitting (769px - 1024px) */
 @media (max-width: 1024px) {
-
   select,
   .pitti-select {
-    font-size: 13px !important;
-    height: 40px !important;
-    padding: 8px 32px 8px 12px !important;
+    font-size: 12.5px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 5px 26px 5px 10px !important;
   }
 
   select option,
   .pitti-select option {
-    font-size: 13px !important;
-    padding: 8px 10px !important;
+    font-size: 12.5px !important;
+    padding: 4px 8px !important;
   }
 }
 
 /* Mobile Resolution Dropdown Fitting (<= 768px) */
 @media (max-width: 768px) {
-
   select,
   .pitti-select {
-    font-size: 14px !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    padding: 9px 34px 9px 12px !important;
-    width: 100% !important;
+    font-size: 13px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 6px 28px 6px 10px !important;
+    max-width: 100% !important;
   }
 
   select option,
   .pitti-select option {
-    font-size: 14px !important;
-    padding: 10px 12px !important;
+    font-size: 13px !important;
+    padding: 5px 8px !important;
   }
 }
 
@@ -390,18 +446,23 @@ select option:checked {
 .filter-bar-responsive {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.filter-bar-responsive>div {
-  flex: 1 1 140px;
-  min-width: 120px;
+.filter-bar-responsive > div {
+  flex: 1 1 130px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .filter-bar-responsive select,
 .filter-bar-responsive input {
   width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 
 /* Small Mobile Breakpoint (<= 480px) */
@@ -686,32 +747,38 @@ select option:checked {
     width: 100%;
   }
 
-  /* Responsive Card Architecture */
+  /* Responsive Liquid Glass Card Architecture */
   .pitti-responsive-card {
-    background: #FFFFFF;
-    border-radius: 14px;
-    border: 1px solid #E2E8F0;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(28px) saturate(210%);
+    -webkit-backdrop-filter: blur(28px) saturate(210%);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
     padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 12px 36px 0 rgba(31, 38, 135, 0.07), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
 
   .pitti-responsive-card:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-    border-color: #CBD5E1;
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 16px 40px 0 rgba(31, 38, 135, 0.1), inset 0 1px 1.5px 0 rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 0.95);
   }
 
   .card-metric-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    background: #F8FAFC;
+    background: rgba(248, 250, 252, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
   }
 
   @media (max-width: 640px) {
@@ -727,4 +794,156 @@ select option:checked {
     padding-top: 10px;
     border-top: 1px solid #F1F5F9;
   }
+}
+
+/* ==========================================================================
+   CLEAN DESIGN SYSTEM COMPONENTS (TABS, CARDS, BADGES, TOGGLES)
+   ========================================================================== */
+
+/* Segmented Tab Bar Architecture */
+.clean-tab-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 22px 0 rgba(31, 38, 135, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+/* Individual Tab Button */
+.clean-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.clean-tab svg {
+  color: inherit;
+  transition: transform 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.clean-tab:hover:not(.clean-tab--active) {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.clean-tab:hover:not(.clean-tab--active) svg {
+  transform: translateY(-1px);
+}
+
+.clean-tab:active:not(.clean-tab--active) {
+  transform: scale(0.98);
+}
+
+/* Active Tab State */
+.clean-tab--active {
+  background: #FFFFFF !important;
+  color: var(--blue) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 14px 0 rgba(30, 96, 213, 0.16), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 1px #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.clean-tab--active svg {
+  color: var(--blue) !important;
+}
+
+/* Clean Liquid Glass Card */
+.clean-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(28px) saturate(210%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 12px 36px 0 rgba(31, 38, 135, 0.07), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Badges */
+.clean-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(241, 245, 249, 0.85);
+  color: var(--ink);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.clean-badge--blue {
+  background: rgba(239, 246, 255, 0.9) !important;
+  color: var(--blue) !important;
+  border-color: rgba(191, 219, 254, 0.9) !important;
+}
+
+/* Toggle Switches */
+.clean-toggle {
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: #CBD5E1;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  position: relative;
+  padding: 2px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  flex-shrink: 0;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.clean-toggle::after {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clean-toggle:hover {
+  filter: brightness(0.96);
+}
+
+.clean-toggle--on {
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
+  box-shadow: 0 2px 10px rgba(30, 96, 213, 0.35) !important;
+}
+
+.clean-toggle--on::after {
+  transform: translateX(20px);
 }

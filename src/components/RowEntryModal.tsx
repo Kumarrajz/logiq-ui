@@ -339,7 +339,7 @@ export function RowEntryModal({
             const hasErr = !!errors[col.key];
 
             return (
-              <div key={col.key} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <div key={col.key} style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0, width: '100%' }}>
                 <label
                   style={{
                     fontSize: 13,
