@@ -5,6 +5,18 @@ import { useSubmissions } from '../api/useSubmissions';
 import { useDynamicPlants, useDynamicDepartments } from '../utils/masterDataUtils';
 import type { FormSubmission } from '../types/FormSubmission';
 
+function safeStr(val: any, fallback = '—'): string {
+  if (val == null) return fallback;
+  if (typeof val === 'string') return val.trim() || fallback;
+  if (typeof val === 'number' || typeof val === 'boolean') return String(val);
+  if (typeof val === 'object') {
+    const s = val.name || val.code || val.id || val.type || val.label || val.title;
+    if (s && typeof s === 'string') return s;
+    return fallback;
+  }
+  return String(val) || fallback;
+}
+
 interface RoleSubmissionHistoryProps {
   currentTemplateId?: string;
   department?: string;
@@ -926,19 +938,19 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
 
                       {/* Department & Plant */}
                       <td style={{ padding: '14px 14px' }}>
-                        <div style={{ fontWeight: 600, color: T.ink }}>{sub.department || 'Production'}</div>
+                        <div style={{ fontWeight: 600, color: T.ink }}>{safeStr(sub.department, 'Production')}</div>
                         <div style={{ fontSize: 11, color: '#4F46E5', fontWeight: 600, marginTop: 2 }}>
-                          {sub.plant || 'Plant-V'}
+                          {safeStr(sub.plant, 'Plant-V')}
                         </div>
                       </td>
 
                       {/* Operator & Machine */}
                       <td style={{ padding: '14px 14px' }}>
                         <div style={{ fontWeight: 600, color: T.ink }}>
-                          {sub.operatorName || firstRow.operator || user?.name || 'Operator'}
+                          {safeStr(sub.operatorName || firstRow.operator || user?.name, 'Operator')}
                         </div>
                         <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
-                          M/c: {firstRow.machine || '—'}
+                          M/c: {safeStr(firstRow.machine || firstRow.machineNo, '—')}
                         </div>
                       </td>
 
@@ -1114,10 +1126,10 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                   {/* Meta Chips */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 12, color: T.ink, background: 'rgba(255, 255, 255, 0.65)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '3px 8px', borderRadius: 6, fontWeight: 500 }}>
-                      {sub.date || 'Today'} • {sub.shift ? sub.shift.split('(')[0] : 'General Shift'}
+                      {sub.date || 'Today'} • {sub.shift ? String(sub.shift).split('(')[0] : 'General Shift'}
                     </span>
                     <span style={{ fontSize: 11, color: '#4F46E5', background: 'rgba(238, 242, 255, 0.7)', border: '1px solid rgba(199, 210, 254, 0.8)', padding: '3px 8px', borderRadius: 6, fontWeight: 600 }}>
-                      {sub.department || 'Production'} ({sub.plant || 'Plant-V'})
+                      {safeStr(sub.department, 'Production')} ({safeStr(sub.plant, 'Plant-V')})
                     </span>
                   </div>
 
@@ -1126,13 +1138,13 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Operator</div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: T.ink, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {sub.operatorName || firstRow.operator || user?.name || 'Operator'}
+                        {safeStr(sub.operatorName || firstRow.operator || user?.name, 'Operator')}
                       </div>
                     </div>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Machine</div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: T.ink, marginTop: 2 }}>
-                        {firstRow.machine || '—'}
+                        {safeStr(firstRow.machine || firstRow.machineNo, '—')}
                       </div>
                     </div>
                     <div>
@@ -1280,7 +1292,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                   Logbook Inspection · {activeInspection.submissionId || activeInspection.id}
                 </h3>
                 <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
-                  {activeInspection.department} · {activeInspection.plant} · {activeInspection.date} ({activeInspection.shift})
+                  {safeStr(activeInspection.department, 'Production')} · {safeStr(activeInspection.plant, 'Plant-V')} · {safeStr(activeInspection.date, 'Today')} ({safeStr(activeInspection.shift, 'General Shift')})
                 </div>
               </div>
               <button
@@ -1322,8 +1334,8 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
                       {activeInspection.rows.map((r: any, rIdx: number) => (
                         <tr key={rIdx} style={{ borderBottom: `1px solid ${T.border}` }}>
                           <td style={{ padding: '8px 12px', fontWeight: 600, color: T.muted }}>{rIdx + 1}</td>
-                          <td style={{ padding: '8px 12px', fontWeight: 600 }}>{r.machine || '—'}</td>
-                          <td style={{ padding: '8px 12px' }}>{r.tool || r.model || r.partCode || r.grade || '—'}</td>
+                          <td style={{ padding: '8px 12px', fontWeight: 600 }}>{safeStr(r.machine || r.machineNo, '—')}</td>
+                          <td style={{ padding: '8px 12px' }}>{safeStr(r.tool || r.model || r.partCode || r.grade, '—')}</td>
                           <td style={{ padding: '8px 12px', fontWeight: 600, color: T.blue }}>
                             {r.prodKgs ? `${r.prodKgs} Kg` : r.actualQty ? `${r.actualQty} Nos` : r.actQty ? `${r.actQty} Nos` : r.totalNos ? `${r.totalNos} Nos` : r.qty || '—'}
                           </td>
@@ -1365,7 +1377,7 @@ export function RoleSubmissionHistory({ currentTemplateId, department }: RoleSub
               }}
             >
               <span style={{ fontSize: 12, color: T.muted }}>
-                Logged by: <b>{activeInspection.operatorName || 'Operator'}</b>
+                Logged by: <b>{safeStr(activeInspection.operatorName, 'Operator')}</b>
               </span>
               <button
                 type="button"

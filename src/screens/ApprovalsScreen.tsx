@@ -143,9 +143,11 @@ export function ApprovalsScreen() {
       }
 
       // Department & Machine names
-      const deptName = s.department || 'Production Shop';
-      const mNo = (firstRow.machine as string) || (firstRow.machineNo as string) || (s.plant ? `${s.plant} M/c` : 'Shop M/c');
-      const opName = (firstRow.operator as string) || s.operatorName || (firstRow.operatorName as string) || 'Shop Operator';
+      const deptName = typeof s.department === 'string' ? s.department : (((s.department as any)?.name) || 'Production Shop');
+      const rawM = (firstRow.machine || firstRow.machineNo) as any;
+      const mNo = typeof rawM === 'string' ? rawM : (rawM?.name || rawM?.code || rawM?.id || rawM?.type || (s.plant ? `${s.plant} M/c` : 'Shop M/c'));
+      const rawOp = (firstRow.operator || s.operatorName || firstRow.operatorName) as any;
+      const opName = typeof rawOp === 'string' ? rawOp : (rawOp?.name || 'Shop Operator');
 
       // Status mapping
       let computedStatus: 'Pending' | 'Approved' | 'Rejected' = 'Pending';

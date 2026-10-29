@@ -265,8 +265,8 @@ export function ReportsScreen() {
             shift: shiftStr,
             department: dept,
             templateId: sub.templateId || 'tpl_press_shop',
-            machineNo: (r.machine as string) || (r.machineNo as string) || (sub.plant ? `${sub.plant} M/c` : 'Shop M/c'),
-            operator: (r.operator as string) || sub.operatorName || (r.operatorName as string) || 'Shop Operator',
+            machineNo: (typeof (r.machine || r.machineNo) === 'string' ? ((r.machine || r.machineNo) as string) : ((r.machine || r.machineNo) as any)?.name || ((r.machine || r.machineNo) as any)?.code || ((r.machine || r.machineNo) as any)?.id || ((r.machine || r.machineNo) as any)?.type || (sub.plant ? `${sub.plant} M/c` : 'Shop M/c')),
+            operator: (typeof (r.operator || sub.operatorName || r.operatorName) === 'string' ? ((r.operator || sub.operatorName || r.operatorName) as string) : ((r.operator || sub.operatorName || r.operatorName) as any)?.name || 'Shop Operator'),
             supervisor,
             status,
 

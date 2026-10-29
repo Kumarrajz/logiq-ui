@@ -134,6 +134,12 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
     'Quality Assurance': ['QA-Optical-1', 'QA-Tensile-2', 'QA-Hardness-3'],
   };
 
+  function formatMachine(m: any): string {
+    if (typeof m === 'string') return m;
+    if (!m || typeof m !== 'object') return 'Shop M/c';
+    return m.name || m.code || m.id || m.type || 'Shop M/c';
+  }
+
   // Dynamic Machines List Filtered by Department
   const machinesList = useMemo(() => {
     const local = localStorage.getItem('logiq_master_machines');
@@ -149,15 +155,16 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
     if (allMachines.length > 0) {
       const filtered = allMachines.filter((m: any) => {
         if (!m.department) return true;
-        const mDept = m.department.toLowerCase();
-        const curDept = department.toLowerCase();
+        const mDept = String(m.department).toLowerCase();
+        const curDept = String(department).toLowerCase();
         return mDept.includes(curDept) || curDept.includes(mDept);
       });
       if (filtered.length > 0) {
-        return filtered.map((m: any) => m.code || m.name || m);
+        return filtered.map(formatMachine);
       }
     }
-    return MACHINES_BY_DEPT[department] || ['N3 - 5446', 'HP-1 (Stator)', 'MC-101 (VMC)', '500T-VDC Bühler', 'CTL-1250-A'];
+    const fallback = MACHINES_BY_DEPT[department] || ['N3 - 5446', 'HP-1 (Stator)', 'MC-101 (VMC)', '500T-VDC Bühler', 'CTL-1250-A'];
+    return fallback.map(formatMachine);
   }, [department, dynamicMachines]);
 
   // Dynamic Shifts List
@@ -226,7 +233,7 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
       const dept = template.departments?.[0] || 'Press Shop & Notching';
       setDepartment(dept);
       const mList = MACHINES_BY_DEPT[dept] || machinesList;
-      if (mList[0]) setMachineNo(mList[0]);
+      if (mList[0]) setMachineNo(formatMachine(mList[0]));
     }
   }, [template?.id, template?.templateId]);
 
@@ -326,11 +333,14 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
       syncStatus: 'synced',
       rows:
         operationRows.length > 0
-          ? operationRows
+          ? operationRows.map((r: any) => ({
+              ...r,
+              machine: formatMachine(r.machine || r.machineNo),
+            }))
           : [
             {
-              machine: machineNo,
-              operator,
+              machine: formatMachine(machineNo),
+              operator: typeof operator === 'string' ? operator : ((operator as any)?.name || 'Operator'),
               tool,
               grade,
               productionType: prodType,
@@ -347,7 +357,7 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
             },
           ],
       remarks,
-      operatorName: operator,
+      operatorName: typeof operator === 'string' ? operator : ((operator as any)?.name || 'Operator'),
       createdAt: new Date().toISOString(),
     };
 
@@ -663,7 +673,7 @@ export function ProductionEntryScreen({ template }: ProductionEntryScreenProps) 
               onChange={(e) => {
                 setDepartment(e.target.value);
                 const firstMachine = (MACHINES_BY_DEPT[e.target.value] || [])[0];
-                if (firstMachine) setMachineNo(firstMachine);
+                if (firstMachine) setMachineNo(formatMachine(firstMachine));
               }}
               style={{
                 width: '100%',
